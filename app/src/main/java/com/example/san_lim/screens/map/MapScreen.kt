@@ -1,4 +1,4 @@
-package com.example.san_lim
+package com.example.san_lim.screens.map
 
 import android.os.Bundle
 import android.util.Log

@@ -4,6 +4,11 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.san_lim.screens.data.DataVisualizationScreen
+import com.example.san_lim.screens.history.HistoryScreen
+import com.example.san_lim.screens.home.HomeScreen
+import com.example.san_lim.screens.map.MapScreen
+import com.example.san_lim.screens.weed.WeedDetectionScreen
 
 @Composable
 fun NavGraph(startDestination: String = "home") {
