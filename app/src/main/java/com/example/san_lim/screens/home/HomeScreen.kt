@@ -1,16 +1,9 @@
 package com.example.san_lim.screens.home
 
-
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.BottomAppBar
 import androidx.compose.material.Icon
@@ -60,50 +53,45 @@ fun HomeScreen(navController: NavHostController) {
         },
         drawerContent = {
             DrawerContent(navController, scaffoldState)
+        },
+        bottomBar = {
+            BottomNavigation(navController)
         }
     ) { innerPadding ->
-        Column(
+        Box(
             modifier = Modifier
                 .padding(innerPadding)
-                .fillMaxSize()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
         ) {
-            Spacer(modifier = Modifier.height(16.dp))
-            Text("Touch to identify", fontSize = 20.sp)
-            Spacer(modifier = Modifier.height(16.dp))
-            Box(
-                modifier = Modifier
-                    .size(100.dp)
-                    .clip(CircleShape)
-                    .background(Material3Theme.colorScheme.primary)
-                    .clickable { navController.navigate("camera") },
-                contentAlignment = Alignment.Center
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_camera),
-                    contentDescription = "Identify",
-                    tint = Color.White,
-                    modifier = Modifier.size(64.dp)
-                )
+                Text("Touch to identify", fontSize = 20.sp)
+                Spacer(modifier = Modifier.height(16.dp))
+                Box(
+                    modifier = Modifier
+                        .size(200.dp)
+                        .clip(CircleShape)
+                        .background(Material3Theme.colorScheme.primary)
+                        .clickable { navController.navigate("camera") },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_camera),
+                        contentDescription = "Identify",
+                        tint = Color.White,
+                        modifier = Modifier.size(64.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                TextButton(onClick = { navController.navigate("history") }) {
+                    Text("History")
+                }
             }
-            Spacer(modifier = Modifier.height(8.dp))
-            TextButton(onClick = { navController.navigate("gallery") }) {
-                Text("Gallery")
-            }
-            Spacer(modifier = Modifier.weight(1f))
-            Text(
-                "Recommendation: Enable the GPS to improve the identification",
-                fontSize = 14.sp,
-                color = Color.Gray
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            BottomNavigation(navController)
         }
     }
 }
-
-
 
 @Composable
 fun BottomNavigation(navController: NavHostController) {
