@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -61,6 +62,8 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.play.services.maps)
     implementation(libs.androidx.runtime.saved.instance.state)
+    implementation(libs.firebase.database.ktx)
+    implementation(libs.firebase.storage.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -69,14 +72,18 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    implementation("androidx.core:core-ktx:1.13.1")
-    implementation("androidx.compose.ui:ui:1.6.8")
-    implementation("androidx.compose.material:material:1.6.8")
-    implementation("androidx.compose.ui:ui-tooling-preview:1.6.8")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.3")
-    implementation("androidx.activity:activity-compose:1.9.0")
-    implementation("androidx.navigation:navigation-compose:2.7.7")
-    implementation("com.google.accompanist:accompanist-navigation-animation:0.24.6-alpha")
+    implementation ("androidx.core:core-ktx:1.13.1")
+    implementation ("androidx.compose.ui:ui:1.6.8")
+    implementation ("androidx.compose.material:material:1.6.8")
+    implementation ("androidx.compose.ui:ui-tooling-preview:1.6.8")
+    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.8.3")
+    implementation ("androidx.activity:activity-compose:1.9.0")
+    implementation ("androidx.navigation:navigation-compose:2.7.7")
+    implementation ("com.google.accompanist:accompanist-navigation-animation:0.24.6-alpha")
+    implementation(platform("com.google.firebase:firebase-bom:33.1.2"))
+    implementation("com.google.firebase:firebase-analytics-ktx")
+    implementation("com.google.firebase:firebase-database-ktx")
+    implementation("com.google.firebase:firebase-storage-ktx")
 
     val camerax_version = "1.4.0-beta02"
     implementation("androidx.camera:camera-core:${camerax_version}")
