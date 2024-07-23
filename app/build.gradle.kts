@@ -98,5 +98,7 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.7.0")
     // Accompanist - LazyVerticalGrid
     implementation("com.google.accompanist:accompanist-flowlayout:0.23.1")
+    implementation ("com.google.code.gson:gson:2.8.6")
+
 
 }

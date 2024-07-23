@@ -14,6 +14,7 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -34,7 +35,7 @@ fun NavGraph(startDestination: String = "home") {
     val navController = rememberNavController()
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
-
+    val context = LocalContext.current
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
@@ -68,7 +69,7 @@ fun NavGraph(startDestination: String = "home") {
             composable("history") { HistoryScreen(navController) }
             composable("map_screen") { MapScreen(navController) }
             composable("camera") { CameraScreen(navController) }
-            composable("book_screen") { BookScreen(navController) }
+            composable("book_screen") { BookScreen(navController,context) }
         }
     }
 }

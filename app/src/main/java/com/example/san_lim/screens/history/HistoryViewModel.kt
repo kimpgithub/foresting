@@ -48,7 +48,7 @@ class HistoryViewModel : ViewModel() {
     fun uploadWeedData(testImageUri: Uri) {
         viewModelScope.launch {
             uploadDataToFirebase(
-                name = "산",
+                name = "할미꽃",
                 latitude = 37.5665,
                 longitude = 126.9780,
                 date = "2023-07-22",
