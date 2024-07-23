@@ -93,4 +93,10 @@ dependencies {
     implementation("androidx.camera:camera-view:${camerax_version}")
     implementation("androidx.camera:camera-mlkit-vision:${camerax_version}")
     implementation("androidx.camera:camera-extensions:${camerax_version}")
+
+    // Coil
+    implementation("io.coil-kt:coil-compose:2.7.0")
+    // Accompanist - LazyVerticalGrid
+    implementation("com.google.accompanist:accompanist-flowlayout:0.23.1")
+
 }

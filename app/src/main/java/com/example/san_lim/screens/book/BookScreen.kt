@@ -1,10 +1,16 @@
-package com.example.san_lim.screens.history
+package com.example.san_lim.screens.book
 
-import android.net.Uri
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -12,7 +18,13 @@ import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,18 +35,22 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.san_lim.models.WeedData
-import com.example.san_lim.viewmodels.HistoryViewModel
+import com.example.san_lim.viewmodels.BookViewModel
 
 @Composable
-fun HistoryScreen(navController: NavHostController) {
-    val historyViewModel: HistoryViewModel = viewModel()
-    val weedDataList by historyViewModel.weedDataList.collectAsState()
-    val fetchError by historyViewModel.fetchError.collectAsState()
-    val uploadSuccess by historyViewModel.uploadSuccess.collectAsState()
-    val uploadFailure by historyViewModel.uploadFailure.collectAsState()
+fun BookScreen(navController: NavHostController) {
+    val bookViewModel: BookViewModel = viewModel()
+    val weedDataList by bookViewModel.weedDataList.collectAsState()
+    val fetchError by bookViewModel.fetchError.collectAsState()
+    val dataFetched by bookViewModel.dataFetched.collectAsState()
     var selectedWeedData by remember { mutableStateOf<WeedData?>(null) }
 
-    val testImageUri = Uri.parse("android.resource://com.example.san_lim/drawable/m")
+    // 뷰모델을 통해 데이터 로드를 처리
+    LaunchedEffect(dataFetched) {
+        if (!dataFetched) {
+            bookViewModel.fetchWeedData()
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -43,15 +59,11 @@ fun HistoryScreen(navController: NavHostController) {
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        UploadButton(
-            testImageUri = testImageUri,
-            onUpload = { historyViewModel.uploadWeedData(testImageUri) }
-        )
-
         Spacer(modifier = Modifier.height(16.dp))
 
+        // LazyVerticalGrid를 사용하여 데이터 리스트를 표시
         LazyVerticalGrid(
-            columns = GridCells.Fixed(4),
+            columns = GridCells.Fixed(2),
             modifier = Modifier.fillMaxSize()
         ) {
             items(weedDataList) { weedData ->
@@ -59,31 +71,15 @@ fun HistoryScreen(navController: NavHostController) {
             }
         }
 
-        if (uploadSuccess) {
-            Text("Upload Successful!")
-        }
-        uploadFailure?.let {
-            Text("Upload Failed: ${it.message}")
-        }
+        // 오류 메시지를 표시
         fetchError?.let {
             Text("Fetch Failed: ${it.message}")
         }
 
+        // 선택된 데이터의 상세 정보를 다이얼로그로 표시
         selectedWeedData?.let { weedData ->
             WeedDataDialog(weedData) { selectedWeedData = null }
         }
-    }
-}
-
-@Composable
-fun UploadButton(testImageUri: Uri, onUpload: () -> Unit) {
-    Button(
-        onClick = onUpload,
-        modifier = Modifier
-            .width(200.dp)
-            .height(50.dp)
-    ) {
-        Text("Upload Data")
     }
 }
 
