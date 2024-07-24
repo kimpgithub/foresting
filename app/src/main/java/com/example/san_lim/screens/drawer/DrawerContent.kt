@@ -26,10 +26,10 @@ fun DrawerContent(navController: NavHostController, scaffoldState: ScaffoldState
         )
         Divider()
         DrawerItem(navController, scaffoldState, scope, "Home", "home")
-        DrawerItem(navController, scaffoldState, scope, "Weed Detection", "weed_detection")
         DrawerItem(navController, scaffoldState, scope, "Data Visualization", "data_visualization")
         DrawerItem(navController, scaffoldState, scope, "History", "history")
         DrawerItem(navController, scaffoldState, scope, "Map Screen", "map_screen")
+        DrawerItem(navController, scaffoldState, scope, "Info Screen", "info_screen")
     }
 }
 
