@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -28,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -51,7 +53,7 @@ fun HomeScreen(navController: NavHostController) {
         item {
             Text("어느 지역의 휴양림을 원하시나요?", fontSize = 20.sp)
             Spacer(modifier = Modifier.height(8.dp))
-            RegionSelection { region = it }
+            RegionSelection { region = it.toString() }
 
             Spacer(modifier = Modifier.height(16.dp))
             Text("몇 명과 함께 방문하실 계획인가요?", fontSize = 20.sp)
@@ -81,52 +83,81 @@ fun HomeScreen(navController: NavHostController) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RegionSelection(onSelect: (String) -> Unit) {
-    val regions = listOf("경상남도", "전라남도", "경상북도", "기타")
-    var selectedRegion by remember { mutableStateOf("") }
-    var otherRegion by remember { mutableStateOf(TextFieldValue("")) }
+fun RegionSelection(onSelect: (List<String>) -> Unit) {
+    val regions = listOf(
+        "강원도",
+        "경기도",
+        "경상남도",
+        "경상북도",
+        "대구광역시",
+        "대전광역시",
+        "부산광역시",
+        "서울특별시",
+        "울산광역시",
+        "인천광역시",
+        "전라남도",
+        "전라북도",
+        "제주특별자치도",
+        "충청남도",
+        "충청북도"
+    ).sorted() + "전체" // 가나다 순으로 정렬하고 "전체" 추가
 
-    Row(
-        horizontalArrangement = Arrangement.SpaceAround,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        regions.forEach { region ->
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .clickable {
-                        selectedRegion = region
-                        onSelect(region)
-                    }
-                    .padding(8.dp)
-            ) {
-                val icon = when (region) {
-                    "경상남도" -> ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground)
-                    "전라남도" -> ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground)
-                    "경상북도" -> ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground)
-                    else -> ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground)
-                }
-                Icon(
-                    imageVector = icon,
-                    contentDescription = region,
-                    tint = if (selectedRegion == region) Color.Blue else Color.Gray,
-                    modifier = Modifier.size(48.dp)
-                )
-                Text(region, fontSize = 16.sp)
+    var selectedRegions by remember { mutableStateOf(emptyList<String>()) }
+
+    fun toggleRegion(region: String) {
+        selectedRegions = if (region == "전체") {
+            if (selectedRegions.contains("전체")) {
+                emptyList()
+            } else {
+                regions
+            }
+        } else {
+            if (selectedRegions.contains(region)) {
+                selectedRegions - region
+            } else {
+                selectedRegions + region
             }
         }
+        onSelect(selectedRegions)
     }
-    if (selectedRegion == "기타") {
-        BasicTextField(
-            value = otherRegion,
-            onValueChange = { otherRegion = it },
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.LightGray)
-                .padding(8.dp)
-        )
-        onSelect(otherRegion.text)
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    ) {
+        regions.chunked(3).forEach { rowRegions ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(4.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                rowRegions.forEach { region ->
+                    Button(
+                        onClick = {
+                            toggleRegion(region)
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (selectedRegions.contains(region)) Color.Blue else Color.LightGray,
+                            contentColor = if (selectedRegions.contains(region)) Color.White else Color.Black
+                        ),
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(4.dp)
+                    ) {
+                        Text(
+                            text = region,
+                            fontSize = 12.sp,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                }
+            }
+        }
     }
 }
 
