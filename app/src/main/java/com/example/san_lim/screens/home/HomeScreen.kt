@@ -89,6 +89,7 @@ fun HomeScreen(navController: NavHostController) {
     }
 }
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegionSelection(onSelect: (List<String>) -> Unit) {
@@ -273,86 +274,141 @@ fun AccommodationSelection(onSelect: (String) -> Unit) {
 
 @Composable
 fun FacilitiesSelection(onSelect: (String) -> Unit) {
-    val options = listOf("자연휴양관", "캠핑장", "산책로", "운동 시설")
+    val options = listOf(
+        "숙박시설",
+        "체험 및 교육 시설",
+        "편의시설",
+        "레저 및 놀이 시설",
+        "자연경관 및 명소",
+    )
     var selectedOption by remember { mutableStateOf("") }
 
-    Row(
-        horizontalArrangement = Arrangement.SpaceAround,
-        modifier = Modifier.fillMaxWidth()
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxWidth().padding(16.dp)
     ) {
-        options.forEach { option ->
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .clickable {
-                        selectedOption = option
-                        onSelect(option)
-                    }
-                    .padding(8.dp)
+        // Split options into rows of 2 and 3 items
+        val rows = listOf(
+            options.take(2),
+            options.drop(2).take(3)
+        )
+
+        rows.forEach { rowOptions ->
+            Row(
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
             ) {
-                val icon = when (option) {
-                    "자연휴양관" -> ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground)
-                    "캠핑장" -> ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground)
-                    "산책로" -> ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground)
-                    else -> ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground)
+                rowOptions.forEach { option ->
+                    val isSelected = selectedOption == option
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .clickable {
+                                selectedOption = option
+                                onSelect(option)
+                            }
+                            .padding(8.dp)
+                    ) {
+                        val icon = when (option) {
+                            "숙박시설" -> painterResource(id = R.drawable.fac_wood_cabin)
+                            "체험 및 교육 시설" -> painterResource(id = R.drawable.fac_exp)
+                            "편의시설" -> painterResource(id = R.drawable.fac_amenities)
+                            "레저 및 놀이 시설" -> painterResource(id = R.drawable.fac_lesuire)
+                            "자연경관 및 명소" -> painterResource(id = R.drawable.fac_nature)
+                            else -> painterResource(id = R.drawable.ic_launcher_foreground)
+                        }
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier
+                                .size(48.dp)
+                                .background(
+                                    color = if (isSelected) Color(0xFFCCFF90) else Color.Transparent,
+                                    shape = RoundedCornerShape(8.dp)
+                                )
+                                .padding(8.dp)
+                        ) {
+                            Image(
+                                painter = icon,
+                                contentDescription = option,
+                                modifier = Modifier.size(48.dp)
+                            )
+                        }
+                        Text(
+                            text = option,
+                            fontSize = 16.sp,
+                            color = if (isSelected) Color.Blue else Color.Black
+                        )
+                    }
                 }
-                Icon(
-                    imageVector = icon,
-                    contentDescription = option,
-                    tint = if (selectedOption == option) Color.Blue else Color.Gray,
-                    modifier = Modifier.size(48.dp)
-                )
-                Text(option, fontSize = 16.sp)
             }
         }
     }
 }
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ActivitiesSelection(onSelect: (String) -> Unit) {
-    val options = listOf("산책", "등산", "휴식", "기타")
+    val options = listOf("야영", "등산", "래프팅", "명소탐방", "산책", "풍경감상", "소풍")
     var selectedOption by remember { mutableStateOf("") }
-    var otherOption by remember { mutableStateOf(TextFieldValue("")) }
 
-    Row(
-        horizontalArrangement = Arrangement.SpaceAround,
-        modifier = Modifier.fillMaxWidth()
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxWidth().padding(16.dp)
     ) {
-        options.forEach { option ->
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .clickable {
-                        selectedOption = option
-                        onSelect(option)
-                    }
-                    .padding(8.dp)
+        // Split options into rows of 3 items, with the last row having 1 item
+        val rows = listOf(
+            options.take(3),
+            options.drop(3).take(3),
+            options.drop(6)
+        )
+
+        rows.forEach { rowOptions ->
+            Row(
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
             ) {
-                val icon = when (option) {
-                    "산책" -> ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground)
-                    "등산" -> ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground)
-                    "휴식" -> ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground)
-                    else -> ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground)
+                rowOptions.forEach { option ->
+                    val isSelected = selectedOption == option
+                    val icon = when (option) {
+                        "야영" -> painterResource(id = R.drawable.act_camping)
+                        "등산" -> painterResource(id = R.drawable.act_hiking)
+                        "래프팅" -> painterResource(id = R.drawable.act_rafting)
+                        "명소탐방" -> painterResource(id = R.drawable.act_seeing)
+                        "산책" -> painterResource(id = R.drawable.act_sanwalk)
+                        "풍경감상" -> painterResource(id = R.drawable.act_seeing)
+                        "소풍" -> painterResource(id = R.drawable.act_picnic)
+                        else -> painterResource(id = R.drawable.ic_launcher_foreground)
+                    }
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .clickable {
+                                selectedOption = option
+                                onSelect(option)
+                            }
+                            .padding(8.dp)
+                            .background(
+                                color = if (isSelected) Color(0xFFCCFF90) else Color.Transparent,
+                                shape = RoundedCornerShape(8.dp)
+                            )
+                            .padding(8.dp)
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Image(
+                                painter = icon,
+                                contentDescription = option,
+                                modifier = Modifier.size(48.dp)
+                            )
+                            Text(
+                                text = option,
+                                fontSize = 16.sp,
+                                color = if (isSelected) Color.Blue else Color.Black
+                            )
+                        }
+                    }
                 }
-                Icon(
-                    imageVector = icon,
-                    contentDescription = option,
-                    tint = if (selectedOption == option) Color.Blue else Color.Gray,
-                    modifier = Modifier.size(48.dp)
-                )
-                Text(option, fontSize = 16.sp)
             }
         }
-    }
-    if (selectedOption == "기타") {
-        BasicTextField(
-            value = otherOption,
-            onValueChange = { otherOption = it },
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.LightGray)
-                .padding(8.dp)
-        )
-        onSelect(otherOption.text)
     }
 }
