@@ -1,8 +1,10 @@
 package com.example.san_lim.screens.home
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,7 +13,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -26,7 +30,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
@@ -161,43 +167,61 @@ fun RegionSelection(onSelect: (List<String>) -> Unit) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CompanionsSelection(onSelect: (String) -> Unit) {
-    val options = listOf("혼자", "연인이나 친구(2~3인)", "가족(4인 이상)")
+    val options = listOf("혼자", "2 ~ 3인", "4인 이상")
     var selectedOption by remember { mutableStateOf("") }
 
     Row(
-        horizontalArrangement = Arrangement.SpaceAround,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         options.forEach { option ->
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
+            val isSelected = selectedOption == option
+            val icon: Painter = when (option) {
+                "혼자" -> painterResource(id = R.drawable.person_1)
+                "2 ~ 3인" -> painterResource(id = R.drawable.person_2)
+                "4인 이상" -> painterResource(id = R.drawable.person_4)
+                else -> painterResource(id = R.drawable.ic_launcher_foreground)
+            }
+            Box(
+                contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .clickable {
                         selectedOption = option
                         onSelect(option)
                     }
                     .padding(8.dp)
+                    .background(
+                        color = if (isSelected) Color(0xFFCCFF90) else Color.Transparent,
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .padding(8.dp)
             ) {
-                val icon = when (option) {
-                    "혼자" -> ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground)
-                    "연인이나 친구(2~3인)" -> ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground)
-                    "가족(4인 이상)" -> ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground)
-                    else -> ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground)
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Image(
+                        painter = icon,
+                        contentDescription = option,
+                        modifier = Modifier.size(48.dp)
+                    )
+                    Text(
+                        text = option,
+                        fontSize = 16.sp,
+                        color = if (isSelected) Color.Blue else Color.Black
+                    )
                 }
-                Icon(
-                    imageVector = icon,
-                    contentDescription = option,
-                    tint = if (selectedOption == option) Color.Blue else Color.Gray,
-                    modifier = Modifier.size(48.dp)
-                )
-                Text(option, fontSize = 16.sp)
             }
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AccommodationSelection(onSelect: (String) -> Unit) {
     val options = listOf("예", "아니오")
@@ -208,27 +232,40 @@ fun AccommodationSelection(onSelect: (String) -> Unit) {
         modifier = Modifier.fillMaxWidth()
     ) {
         options.forEach { option ->
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
+            val isSelected = selectedOption == option
+            val icon: Painter = when (option) {
+                "예" -> painterResource(id = R.drawable.sukbak)
+                "아니오" -> painterResource(id = R.drawable.dangil)
+                else -> painterResource(id = R.drawable.ic_launcher_foreground)
+            }
+            Box(
+                contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .clickable {
                         selectedOption = option
                         onSelect(option)
                     }
                     .padding(8.dp)
+                    .background(
+                        color = if (isSelected) Color(0xFFCCFF90) else Color.Transparent,
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .padding(8.dp)
             ) {
-                val icon = when (option) {
-                    "예" -> ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground)
-                    "아니오" -> ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground)
-                    else -> ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground)
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Image(
+                        painter = icon,
+                        contentDescription = option,
+                        modifier = Modifier.size(48.dp)
+                    )
+                    Text(
+                        text = option,
+                        fontSize = 16.sp,
+                        color = if (isSelected) Color.Blue else Color.Black
+                    )
                 }
-                Icon(
-                    imageVector = icon,
-                    contentDescription = option,
-                    tint = if (selectedOption == option) Color.Blue else Color.Gray,
-                    modifier = Modifier.size(48.dp)
-                )
-                Text(option, fontSize = 16.sp)
             }
         }
     }
