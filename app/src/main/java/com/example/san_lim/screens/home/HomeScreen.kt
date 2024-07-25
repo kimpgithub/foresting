@@ -2,6 +2,7 @@ package com.example.san_lim.screens.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,12 +10,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.Button
-import androidx.compose.material.RadioButton
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,10 +25,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.san_lim.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -35,7 +40,6 @@ fun HomeScreen(navController: NavHostController) {
     var companions by remember { mutableStateOf("") }
     var accommodation by remember { mutableStateOf("") }
     var facilities by remember { mutableStateOf("") }
-    var budget by remember { mutableStateOf("") }
     var activities by remember { mutableStateOf("") }
 
     LazyColumn(
@@ -50,24 +54,19 @@ fun HomeScreen(navController: NavHostController) {
             RegionSelection { region = it }
 
             Spacer(modifier = Modifier.height(16.dp))
-            Text("혼자 여행하시나요 아니면 여러 사람과 함께 가시나요?", fontSize = 20.sp)
+            Text("몇 명과 함께 방문하실 계획인가요?", fontSize = 20.sp)
             Spacer(modifier = Modifier.height(8.dp))
             CompanionsSelection { companions = it }
 
             Spacer(modifier = Modifier.height(16.dp))
-            Text("숙박을 원하시나요?", fontSize = 20.sp)
+            Text("숙박을 계획하고 계신가요?", fontSize = 20.sp)
             Spacer(modifier = Modifier.height(8.dp))
             AccommodationSelection { accommodation = it }
 
             Spacer(modifier = Modifier.height(16.dp))
-            Text("어떤 시설을 이용하고 싶으신가요?", fontSize = 20.sp)
+            Text("어떤 시설을 중요하게 생각하시나요?", fontSize = 20.sp)
             Spacer(modifier = Modifier.height(8.dp))
             FacilitiesSelection { facilities = it }
-
-            Spacer(modifier = Modifier.height(16.dp))
-            Text("예산은 얼마 정도로 생각하시나요?", fontSize = 20.sp)
-            Spacer(modifier = Modifier.height(8.dp))
-            BudgetSelection { budget = it }
 
             Spacer(modifier = Modifier.height(16.dp))
             Text("어떤 활동을 선호하시나요?", fontSize = 20.sp)
@@ -88,59 +87,79 @@ fun RegionSelection(onSelect: (String) -> Unit) {
     var selectedRegion by remember { mutableStateOf("") }
     var otherRegion by remember { mutableStateOf(TextFieldValue("")) }
 
-    Column {
+    Row(
+        horizontalArrangement = Arrangement.SpaceAround,
+        modifier = Modifier.fillMaxWidth()
+    ) {
         regions.forEach { region ->
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
-                    .fillMaxWidth()
                     .clickable {
                         selectedRegion = region
-                        if (region != "기타") onSelect(region)
+                        onSelect(region)
                     }
-                    .padding(vertical = 4.dp)
+                    .padding(8.dp)
             ) {
-                RadioButton(
-                    selected = selectedRegion == region,
-                    onClick = {
-                        selectedRegion = region
-                        if (region != "기타") onSelect(region)
-                    }
+                val icon = when (region) {
+                    "경상남도" -> ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground)
+                    "전라남도" -> ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground)
+                    "경상북도" -> ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground)
+                    else -> ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground)
+                }
+                Icon(
+                    imageVector = icon,
+                    contentDescription = region,
+                    tint = if (selectedRegion == region) Color.Blue else Color.Gray,
+                    modifier = Modifier.size(48.dp)
                 )
                 Text(region, fontSize = 16.sp)
             }
         }
-        if (selectedRegion == "기타") {
-            BasicTextField(
-                value = otherRegion,
-                onValueChange = { otherRegion = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color.LightGray)
-                    .padding(8.dp)
-            )
-            onSelect(otherRegion.text)
-        }
+    }
+    if (selectedRegion == "기타") {
+        BasicTextField(
+            value = otherRegion,
+            onValueChange = { otherRegion = it },
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.LightGray)
+                .padding(8.dp)
+        )
+        onSelect(otherRegion.text)
     }
 }
 
 @Composable
 fun CompanionsSelection(onSelect: (String) -> Unit) {
-    val options = listOf("혼자", "여러 사람")
+    val options = listOf("혼자", "연인이나 친구(2~3인)", "가족(4인 이상)")
     var selectedOption by remember { mutableStateOf("") }
 
-    Column {
+    Row(
+        horizontalArrangement = Arrangement.SpaceAround,
+        modifier = Modifier.fillMaxWidth()
+    ) {
         options.forEach { option ->
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { selectedOption = option; onSelect(option) }
-                    .padding(vertical = 4.dp)
+                    .clickable {
+                        selectedOption = option
+                        onSelect(option)
+                    }
+                    .padding(8.dp)
             ) {
-                RadioButton(
-                    selected = selectedOption == option,
-                    onClick = { selectedOption = option; onSelect(option) }
+                val icon = when (option) {
+                    "혼자" -> ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground)
+                    "연인이나 친구(2~3인)" -> ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground)
+                    "가족(4인 이상)" -> ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground)
+                    else -> ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground)
+                }
+                Icon(
+                    imageVector = icon,
+                    contentDescription = option,
+                    tint = if (selectedOption == option) Color.Blue else Color.Gray,
+                    modifier = Modifier.size(48.dp)
                 )
                 Text(option, fontSize = 16.sp)
             }
@@ -150,126 +169,73 @@ fun CompanionsSelection(onSelect: (String) -> Unit) {
 
 @Composable
 fun AccommodationSelection(onSelect: (String) -> Unit) {
-    val options = listOf("숲속의 집", "캠핑장", "기타")
+    val options = listOf("예", "아니오")
     var selectedOption by remember { mutableStateOf("") }
-    var otherOption by remember { mutableStateOf(TextFieldValue("")) }
 
-    Column {
+    Row(
+        horizontalArrangement = Arrangement.SpaceAround,
+        modifier = Modifier.fillMaxWidth()
+    ) {
         options.forEach { option ->
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
-                    .fillMaxWidth()
                     .clickable {
                         selectedOption = option
-                        if (option != "기타") onSelect(option)
+                        onSelect(option)
                     }
-                    .padding(vertical = 4.dp)
+                    .padding(8.dp)
             ) {
-                RadioButton(
-                    selected = selectedOption == option,
-                    onClick = {
-                        selectedOption = option
-                        if (option != "기타") onSelect(option)
-                    }
+                val icon = when (option) {
+                    "예" -> ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground)
+                    "아니오" -> ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground)
+                    else -> ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground)
+                }
+                Icon(
+                    imageVector = icon,
+                    contentDescription = option,
+                    tint = if (selectedOption == option) Color.Blue else Color.Gray,
+                    modifier = Modifier.size(48.dp)
                 )
                 Text(option, fontSize = 16.sp)
             }
-        }
-        if (selectedOption == "기타") {
-            BasicTextField(
-                value = otherOption,
-                onValueChange = { otherOption = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color.LightGray)
-                    .padding(8.dp)
-            )
-            onSelect(otherOption.text)
         }
     }
 }
 
 @Composable
 fun FacilitiesSelection(onSelect: (String) -> Unit) {
-    val options = listOf("글램핑장", "야영장", "세미나실", "기타")
+    val options = listOf("자연휴양관", "캠핑장", "산책로", "운동 시설")
     var selectedOption by remember { mutableStateOf("") }
-    var otherOption by remember { mutableStateOf(TextFieldValue("")) }
 
-    Column {
+    Row(
+        horizontalArrangement = Arrangement.SpaceAround,
+        modifier = Modifier.fillMaxWidth()
+    ) {
         options.forEach { option ->
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
-                    .fillMaxWidth()
                     .clickable {
                         selectedOption = option
-                        if (option != "기타") onSelect(option)
+                        onSelect(option)
                     }
-                    .padding(vertical = 4.dp)
+                    .padding(8.dp)
             ) {
-                RadioButton(
-                    selected = selectedOption == option,
-                    onClick = {
-                        selectedOption = option
-                        if (option != "기타") onSelect(option)
-                    }
+                val icon = when (option) {
+                    "자연휴양관" -> ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground)
+                    "캠핑장" -> ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground)
+                    "산책로" -> ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground)
+                    else -> ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground)
+                }
+                Icon(
+                    imageVector = icon,
+                    contentDescription = option,
+                    tint = if (selectedOption == option) Color.Blue else Color.Gray,
+                    modifier = Modifier.size(48.dp)
                 )
                 Text(option, fontSize = 16.sp)
             }
-        }
-        if (selectedOption == "기타") {
-            BasicTextField(
-                value = otherOption,
-                onValueChange = { otherOption = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color.LightGray)
-                    .padding(8.dp)
-            )
-            onSelect(otherOption.text)
-        }
-    }
-}
-
-@Composable
-fun BudgetSelection(onSelect: (String) -> Unit) {
-    val options = listOf("5,000원 이하", "10,000원 이하", "15,000원 이하", "기타")
-    var selectedOption by remember { mutableStateOf("") }
-    var otherOption by remember { mutableStateOf(TextFieldValue("")) }
-
-    Column {
-        options.forEach { option ->
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        selectedOption = option
-                        if (option != "기타") onSelect(option)
-                    }
-                    .padding(vertical = 4.dp)
-            ) {
-                RadioButton(
-                    selected = selectedOption == option,
-                    onClick = {
-                        selectedOption = option
-                        if (option != "기타") onSelect(option)
-                    }
-                )
-                Text(option, fontSize = 16.sp)
-            }
-        }
-        if (selectedOption == "기타") {
-            BasicTextField(
-                value = otherOption,
-                onValueChange = { otherOption = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color.LightGray)
-                    .padding(8.dp)
-            )
-            onSelect(otherOption.text)
         }
     }
 }
@@ -280,39 +246,45 @@ fun ActivitiesSelection(onSelect: (String) -> Unit) {
     var selectedOption by remember { mutableStateOf("") }
     var otherOption by remember { mutableStateOf(TextFieldValue("")) }
 
-    Column {
+    Row(
+        horizontalArrangement = Arrangement.SpaceAround,
+        modifier = Modifier.fillMaxWidth()
+    ) {
         options.forEach { option ->
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
-                    .fillMaxWidth()
                     .clickable {
                         selectedOption = option
-                        if (option != "기타") onSelect(option)
+                        onSelect(option)
                     }
-                    .padding(vertical = 4.dp)
+                    .padding(8.dp)
             ) {
-                RadioButton(
-                    selected = selectedOption == option,
-                    onClick = {
-                        selectedOption = option
-                        if (option != "기타") onSelect(option)
-                    }
+                val icon = when (option) {
+                    "산책" -> ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground)
+                    "등산" -> ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground)
+                    "휴식" -> ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground)
+                    else -> ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground)
+                }
+                Icon(
+                    imageVector = icon,
+                    contentDescription = option,
+                    tint = if (selectedOption == option) Color.Blue else Color.Gray,
+                    modifier = Modifier.size(48.dp)
                 )
                 Text(option, fontSize = 16.sp)
             }
         }
-        if (selectedOption == "기타") {
-            BasicTextField(
-                value = otherOption,
-                onValueChange = { otherOption = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color.LightGray)
-                    .padding(8.dp)
-            )
-            onSelect(otherOption.text)
-        }
+    }
+    if (selectedOption == "기타") {
+        BasicTextField(
+            value = otherOption,
+            onValueChange = { otherOption = it },
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.LightGray)
+                .padding(8.dp)
+        )
+        onSelect(otherOption.text)
     }
 }
-
