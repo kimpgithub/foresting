@@ -13,14 +13,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -31,10 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -184,9 +178,9 @@ fun CompanionsSelection(onSelect: (String) -> Unit) {
         options.forEach { option ->
             val isSelected = selectedOption == option
             val icon: Painter = when (option) {
-                "혼자" -> painterResource(id = R.drawable.person_1)
-                "2 ~ 3인" -> painterResource(id = R.drawable.person_2)
-                "4인 이상" -> painterResource(id = R.drawable.person_4)
+                "혼자" -> painterResource(id = R.drawable.comp_person_1)
+                "2 ~ 3인" -> painterResource(id = R.drawable.comp_person_2)
+                "4인 이상" -> painterResource(id = R.drawable.comp_person_4)
                 else -> painterResource(id = R.drawable.ic_launcher_foreground)
             }
             Box(
@@ -235,8 +229,8 @@ fun AccommodationSelection(onSelect: (String) -> Unit) {
         options.forEach { option ->
             val isSelected = selectedOption == option
             val icon: Painter = when (option) {
-                "예" -> painterResource(id = R.drawable.sukbak)
-                "아니오" -> painterResource(id = R.drawable.dangil)
+                "예" -> painterResource(id = R.drawable.accom_sukbak)
+                "아니오" -> painterResource(id = R.drawable.accom_dangil)
                 else -> painterResource(id = R.drawable.ic_launcher_foreground)
             }
             Box(
