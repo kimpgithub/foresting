@@ -114,13 +114,6 @@ fun BottomNavigation(navController: NavHostController) {
             )
         }
         Spacer(modifier = Modifier.weight(1f, true))
-        IconButton(onClick = { navController.navigate("book_screen") }) {
-            Icon(
-                painter = painterResource(id = R.drawable.baseline_photo_library_24),
-                contentDescription = "Book Screen"
-            )
-        }
-        Spacer(modifier = Modifier.weight(1f, true))
         IconButton(onClick = { navController.navigate("map_screen") }) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_map),
@@ -128,17 +121,11 @@ fun BottomNavigation(navController: NavHostController) {
             )
         }
         Spacer(modifier = Modifier.weight(1f, true))
-        IconButton(onClick = { navController.navigate("info_screen") }) {
+        IconButton(onClick = { navController.navigate("profile_screen") }) { // 변경된 부분
             Icon(
-                painter = painterResource(id = R.drawable.ic_info),
-                contentDescription = "Info Screen"
+                painter = painterResource(id = R.drawable.ic_profile),
+                contentDescription = "Profile Screen"
             )
-            IconButton(onClick = { navController.navigate("profile_screen") }) { // 변경된 부분
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_profile),
-                    contentDescription = "Profile Screen"
-                )
-            }
         }
     }
 }

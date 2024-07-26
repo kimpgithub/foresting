@@ -107,14 +107,14 @@ fun QuickAccessItem(
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxSize()
-                    .graphicsLayer(alpha = 0.3f) // Set transparency
+                    .graphicsLayer(alpha = 0.2f) // Set transparency
             )
             // Add the text on top of the image
             Text(
                 text = title,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.White // Adjust text color for better visibility
+                color = Color.Black // Adjust text color for better visibility
             )
         }
     }
@@ -140,7 +140,7 @@ fun QuickAccessGrid(navController: NavController, modifier: Modifier = Modifier)
                 modifier = Modifier.weight(1f)
             )
             QuickAccessItem(
-                title = "100대 명상 트레킹코스",
+                title = "트레킹 코스",
                 backgroundColor = Color(0xFFF3B0C3),
                 navController = navController,
                 destination = "guide_screen",
@@ -167,9 +167,9 @@ fun QuickAccessGrid(navController: NavController, modifier: Modifier = Modifier)
                 title = "봉사 알림",
                 backgroundColor = Color(0xFFFFF0C2),
                 navController = navController,
-                destination = "empty_screen",
-                isExternalLink = false,
-                imageResourceId = R.drawable.home_sanlim, // Replace with your image resource
+                destination = "https://www.1365.go.kr/vols/1572247904127/partcptn/timeCptn.do",
+                isExternalLink = true,
+                imageResourceId = R.drawable.home_boongsa, // Replace with your image resource
                 modifier = Modifier.weight(1f)
             )
         }
