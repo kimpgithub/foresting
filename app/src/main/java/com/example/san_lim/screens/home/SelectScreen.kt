@@ -1,29 +1,14 @@
 package com.example.san_lim.screens.home
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,6 +19,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.san_lim.R
+import com.example.san_lim.network.RecommendationRequest
+import com.example.san_lim.network.RetrofitClient
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,8 +31,9 @@ fun SelectScreen(navController: NavHostController) {
     var region by remember { mutableStateOf("") }
     var companions by remember { mutableStateOf("") }
     var accommodation by remember { mutableStateOf("") }
-    var facilities by remember { mutableStateOf("") }
-    var activities by remember { mutableStateOf("") }
+    var facilities by remember { mutableStateOf(listOf<String>()) }
+    var activities by remember { mutableStateOf(listOf<String>()) }
+    var recommendations by remember { mutableStateOf<List<String>?>(null) }
 
     LazyColumn(
         modifier = Modifier
@@ -53,36 +44,71 @@ fun SelectScreen(navController: NavHostController) {
         item {
             Text("어느 지역의 휴양림을 원하시나요?", fontSize = 20.sp)
             Spacer(modifier = Modifier.height(8.dp))
-            RegionSelection { region = it.toString() }
+            RegionSelection { selectedRegions -> region = selectedRegions.joinToString(", ") }
 
             Spacer(modifier = Modifier.height(16.dp))
             Text("몇 명과 함께 방문하실 계획인가요?", fontSize = 20.sp)
             Spacer(modifier = Modifier.height(8.dp))
-            CompanionsSelection { companions = it }
+            CompanionsSelection { selectedCompanions -> companions = selectedCompanions }
 
             Spacer(modifier = Modifier.height(16.dp))
             Text("숙박을 계획하고 계신가요?", fontSize = 20.sp)
             Spacer(modifier = Modifier.height(8.dp))
-            AccommodationSelection { accommodation = it }
+            AccommodationSelection { selectedAccommodation -> accommodation = selectedAccommodation }
 
             Spacer(modifier = Modifier.height(16.dp))
             Text("어떤 시설을 중요하게 생각하시나요?", fontSize = 20.sp)
             Spacer(modifier = Modifier.height(8.dp))
-            FacilitiesSelection { facilities = it }
+            FacilitiesSelection { selectedFacilities -> facilities = selectedFacilities }
 
             Spacer(modifier = Modifier.height(16.dp))
             Text("어떤 활동을 선호하시나요?", fontSize = 20.sp)
             Spacer(modifier = Modifier.height(8.dp))
-            ActivitiesSelection { activities = it }
+            ActivitiesSelection { selectedActivities -> activities = selectedActivities }
 
             Spacer(modifier = Modifier.height(32.dp))
-            Button(onClick = { /* TODO: navigate to recommendation screen */ }) {
+            Button(onClick = {
+                Log.d("SelectScreen", "Button clicked")
+                val apiService = RetrofitClient.instance
+                val request = RecommendationRequest(
+                    user_id = "test@intel.com", // 실제 사용자 ID로 변경
+                    region = region,
+                    activities = activities,
+                    facilities = facilities
+                )
+
+                Log.d("SelectScreen", "Sending request: $request")
+                apiService.getRecommendations(request).enqueue(object : Callback<List<String>> {
+                    override fun onResponse(call: Call<List<String>>, response: Response<List<String>>) {
+                        if (response.isSuccessful) {
+                            Log.d("SelectScreen", "Response: ${response.body()}")
+                            recommendations = response.body()
+                        } else {
+                            Log.e("SelectScreen", "Response failed: ${response.errorBody()}")
+                        }
+                    }
+
+                    override fun onFailure(call: Call<List<String>>, t: Throwable) {
+                        Log.e("SelectScreen", "Request failed", t)
+                    }
+                })
+            }) {
                 Text("자동추천")
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            recommendations?.let {
+                Column {
+                    Text("추천된 휴양림:", fontSize = 20.sp)
+                    it.forEach { recommendation ->
+                        Text(text = recommendation, fontSize = 18.sp)
+                    }
+                }
             }
         }
     }
 }
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -92,15 +118,14 @@ fun RegionSelection(onSelect: (List<String>) -> Unit) {
         "경기도",
         "경상남도",
         "경상북도",
-        "대구광역시",
-        "대전광역시",
-        "부산광역시",
-        "서울특별시",
-        "울산광역시",
-        "인천광역시",
+        "대구",
+        "대전",
+        "부산",
+        "울산",
+        "인천",
         "전라남도",
         "전라북도",
-        "제주특별자치도",
+        "제주도",
         "충청남도",
         "충청북도"
     ).sorted() + "전체" // 가나다 순으로 정렬하고 "전체" 추가
@@ -266,8 +291,9 @@ fun AccommodationSelection(onSelect: (String) -> Unit) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FacilitiesSelection(onSelect: (String) -> Unit) {
+fun FacilitiesSelection(onSelect: (List<String>) -> Unit) {
     val options = listOf(
         "숙박시설",
         "체험 및 교육 시설",
@@ -275,7 +301,16 @@ fun FacilitiesSelection(onSelect: (String) -> Unit) {
         "레저 및 놀이 시설",
         "자연경관 및 명소",
     )
-    var selectedOption by remember { mutableStateOf("") }
+    var selectedOptions by remember { mutableStateOf(listOf<String>()) }
+
+    fun toggleOption(option: String) {
+        selectedOptions = if (selectedOptions.contains(option)) {
+            selectedOptions - option
+        } else {
+            selectedOptions + option
+        }
+        onSelect(selectedOptions)
+    }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -293,13 +328,12 @@ fun FacilitiesSelection(onSelect: (String) -> Unit) {
                 modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
             ) {
                 rowOptions.forEach { option ->
-                    val isSelected = selectedOption == option
+                    val isSelected = selectedOptions.contains(option)
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
                             .clickable {
-                                selectedOption = option
-                                onSelect(option)
+                                toggleOption(option)
                             }
                             .padding(8.dp)
                     ) {
@@ -338,11 +372,21 @@ fun FacilitiesSelection(onSelect: (String) -> Unit) {
         }
     }
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ActivitiesSelection(onSelect: (String) -> Unit) {
+fun ActivitiesSelection(onSelect: (List<String>) -> Unit) {
     val options = listOf("야영", "등산", "래프팅", "명소탐방", "산책", "풍경감상", "소풍")
-    var selectedOption by remember { mutableStateOf("") }
+    var selectedOptions by remember { mutableStateOf(listOf<String>()) }
+
+    fun toggleOption(option: String) {
+        selectedOptions = if (selectedOptions.contains(option)) {
+            selectedOptions - option
+        } else {
+            selectedOptions + option
+        }
+        onSelect(selectedOptions)
+    }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -361,7 +405,7 @@ fun ActivitiesSelection(onSelect: (String) -> Unit) {
                 modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
             ) {
                 rowOptions.forEach { option ->
-                    val isSelected = selectedOption == option
+                    val isSelected = selectedOptions.contains(option)
                     val icon = when (option) {
                         "야영" -> painterResource(id = R.drawable.act_camping)
                         "등산" -> painterResource(id = R.drawable.act_hiking)
@@ -376,8 +420,7 @@ fun ActivitiesSelection(onSelect: (String) -> Unit) {
                         contentAlignment = Alignment.Center,
                         modifier = Modifier
                             .clickable {
-                                selectedOption = option
-                                onSelect(option)
+                                toggleOption(option)
                             }
                             .padding(8.dp)
                             .background(
