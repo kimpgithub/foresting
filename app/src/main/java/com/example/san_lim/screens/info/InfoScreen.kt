@@ -6,8 +6,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Card
-import androidx.compose.material.Text
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -16,21 +17,15 @@ import androidx.navigation.NavController
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
-import kotlin.math.atan2
-import kotlin.math.cos
-import kotlin.math.sin
-import kotlin.math.sqrt
 
 @Composable
-fun InfoScreen(navController: NavController) {
+fun InfoScreen(navController: NavController, recommendations: List<String>) {
     val context = LocalContext.current
     val lodges = loadForestLodgesFromJSON(context, "hueyanglim_data.json")
-    val currentLat = 37.5665
-    val currentLon = 126.9780
-    val closestLodges = findClosestLodges(currentLat, currentLon, lodges)
+    val filteredLodges = lodges.filter { it.휴양림명 in recommendations }
 
     LazyColumn(modifier = Modifier.padding(16.dp)) {
-        items(closestLodges) { lodge ->
+        items(filteredLodges) { lodge ->
             LodgeCard(lodge)
         }
     }
@@ -38,7 +33,12 @@ fun InfoScreen(navController: NavController) {
 
 @Composable
 fun LodgeCard(lodge: ForestLodge) {
-    Card(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp), elevation = 4.dp) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(text = "Name: ${lodge.휴양림명}")
             Text(text = "City: ${lodge.시도명}")
@@ -101,15 +101,3 @@ fun loadForestLodgesFromJSON(context: Context, fileName: String): List<ForestLod
     }
 }
 
-fun calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
-    val earthRadius = 6371.0 // km
-    val dLat = Math.toRadians(lat2 - lat1)
-    val dLon = Math.toRadians(lon2 - lon1)
-    val a = sin(dLat / 2) * sin(dLat / 2) + cos(Math.toRadians(lat1)) * cos(Math.toRadians(lat2)) * sin(dLon / 2) * sin(dLon / 2)
-    val c = 2 * atan2(sqrt(a), sqrt(1 - a))
-    return earthRadius * c
-}
-
-fun findClosestLodges(currentLat: Double, currentLon: Double, lodges: List<ForestLodge>): List<ForestLodge> {
-    return lodges.sortedBy { calculateDistance(currentLat, currentLon, it.위도, it.경도) }.take(10)
-}

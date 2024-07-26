@@ -19,10 +19,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-//import com.example.san_lim.screens.book.BookScreen
-import com.example.san_lim.screens.data.DataVisualizationScreen
-import com.example.san_lim.screens.drawer.DrawerContent
-//import com.example.san_lim.screens.history.HistoryScreen
+import androidx.navigation.navArgument
 import com.example.san_lim.screens.home.HomeScreen
 import com.example.san_lim.screens.home.SelectScreen
 import com.example.san_lim.screens.info.InfoScreen
@@ -52,9 +49,6 @@ fun NavGraph(startDestination: String = "home") {
                 }
             )
         },
-        drawerContent = {
-            DrawerContent(navController, scaffoldState)
-        },
         bottomBar = {
             BottomNavigation(navController)
         }
@@ -66,12 +60,15 @@ fun NavGraph(startDestination: String = "home") {
         ) {
             composable("home") { HomeScreen(navController) }
             composable("select_screen") { SelectScreen(navController) }
-            composable("data_visualization") { DataVisualizationScreen(navController) }
-//            composable("history") { HistoryScreen(navController) }
+            composable(
+                "info_screen/{recommendations}",
+                arguments = listOf(navArgument("recommendations") { defaultValue = "" })
+            ) { backStackEntry ->
+                val recommendationsString = backStackEntry.arguments?.getString("recommendations")
+                val recommendations = recommendationsString?.split(",")?.map { it.trim() } ?: emptyList()
+                InfoScreen(navController, recommendations)
+            }
             composable("map_screen") { MapScreen(navController) }
-//            composable("book_screen") { BookScreen(navController,context) }
-            composable("info_screen") { InfoScreen(navController) }
-
         }
     }
 }
@@ -83,28 +80,25 @@ fun BottomNavigation(navController: NavHostController) {
             Icon(painter = painterResource(id = R.drawable.ic_home), contentDescription = "Home")
         }
         Spacer(modifier = Modifier.weight(1f, true))
-//        IconButton(onClick = { navController.navigate("weed_detection") }) {
-//            Icon(painter = painterResource(id = R.drawable.ic_weed_detection), contentDescription = "Weed Detection")
-//        }
-//        Spacer(modifier = Modifier.weight(1f, true))
-//        IconButton(onClick = { navController.navigate("data_visualization") }) {
-//            Icon(painter = painterResource(id = R.drawable.ic_data_visualization), contentDescription = "Data Visualization")
-//        }
-//        Spacer(modifier = Modifier.weight(1f, true))
-        IconButton(onClick = { navController.navigate("history") }) {
-            Icon(painter = painterResource(id = R.drawable.ic_history), contentDescription = "History")
-        }
-        Spacer(modifier = Modifier.weight(1f, true))
-        IconButton(onClick = { navController.navigate("book_screen") }) {
-            Icon(painter = painterResource(id = R.drawable.baseline_photo_library_24), contentDescription = "Book Screen")
+        IconButton(onClick = { navController.navigate("_screen") }) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_map),
+                contentDescription = "Map Screen"
+            )
         }
         Spacer(modifier = Modifier.weight(1f, true))
         IconButton(onClick = { navController.navigate("map_screen") }) {
-            Icon(painter = painterResource(id = R.drawable.ic_map), contentDescription = "Map Screen")
+            Icon(
+                painter = painterResource(id = R.drawable.ic_map),
+                contentDescription = "Map Screen"
+            )
         }
         Spacer(modifier = Modifier.weight(1f, true))
         IconButton(onClick = { navController.navigate("info_screen") }) {
-            Icon(painter = painterResource(id = R.drawable.ic_info), contentDescription = "Info Screen")
+            Icon(
+                painter = painterResource(id = R.drawable.ic_info),
+                contentDescription = "Info Screen"
+            )
         }
     }
 }

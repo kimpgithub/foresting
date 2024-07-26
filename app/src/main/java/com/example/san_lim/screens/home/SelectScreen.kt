@@ -54,7 +54,9 @@ fun SelectScreen(navController: NavHostController) {
             Spacer(modifier = Modifier.height(16.dp))
             Text("숙박을 계획하고 계신가요?", fontSize = 20.sp)
             Spacer(modifier = Modifier.height(8.dp))
-            AccommodationSelection { selectedAccommodation -> accommodation = selectedAccommodation }
+            AccommodationSelection { selectedAccommodation ->
+                accommodation = selectedAccommodation
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
             Text("어떤 시설을 중요하게 생각하시나요?", fontSize = 20.sp)
@@ -77,14 +79,17 @@ fun SelectScreen(navController: NavHostController) {
                     facilities = facilities
                 )
 
-                Log.d("SelectScreen", "Sending request: $request")
                 apiService.getRecommendations(request).enqueue(object : Callback<List<String>> {
-                    override fun onResponse(call: Call<List<String>>, response: Response<List<String>>) {
+                    override fun onResponse(
+                        call: Call<List<String>>,
+                        response: Response<List<String>>
+                    ) {
                         if (response.isSuccessful) {
-                            Log.d("SelectScreen", "Response: ${response.body()}")
-                            recommendations = response.body()
-                        } else {
-                            Log.e("SelectScreen", "Response failed: ${response.errorBody()}")
+                            val recommendations = response.body()
+                            if (recommendations != null) {
+                                Log.d("SelectScreen", "Response: $recommendations")
+                                navController.navigate("info_screen/${recommendations.joinToString(",")}")
+                            }
                         }
                     }
 
@@ -95,20 +100,22 @@ fun SelectScreen(navController: NavHostController) {
             }) {
                 Text("자동추천")
             }
+        }
+    }
 
-            Spacer(modifier = Modifier.height(16.dp))
 
-            recommendations?.let {
-                Column {
-                    Text("추천된 휴양림:", fontSize = 20.sp)
-                    it.forEach { recommendation ->
-                        Text(text = recommendation, fontSize = 18.sp)
-                    }
-                }
+    Spacer(modifier = Modifier.height(16.dp))
+
+    recommendations?.let {
+        Column {
+            Text("추천된 휴양림:", fontSize = 20.sp)
+            it.forEach { recommendation ->
+                Text(text = recommendation, fontSize = 18.sp)
             }
         }
     }
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -314,7 +321,9 @@ fun FacilitiesSelection(onSelect: (List<String>) -> Unit) {
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxWidth().padding(16.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
     ) {
         // Split options into rows of 2 and 3 items
         val rows = listOf(
@@ -325,7 +334,9 @@ fun FacilitiesSelection(onSelect: (List<String>) -> Unit) {
         rows.forEach { rowOptions ->
             Row(
                 horizontalArrangement = Arrangement.SpaceEvenly,
-                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
             ) {
                 rowOptions.forEach { option ->
                     val isSelected = selectedOptions.contains(option)
@@ -390,7 +401,9 @@ fun ActivitiesSelection(onSelect: (List<String>) -> Unit) {
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxWidth().padding(16.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
     ) {
         // Split options into rows of 3 items, with the last row having 1 item
         val rows = listOf(
@@ -402,7 +415,9 @@ fun ActivitiesSelection(onSelect: (List<String>) -> Unit) {
         rows.forEach { rowOptions ->
             Row(
                 horizontalArrangement = Arrangement.SpaceEvenly,
-                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
             ) {
                 rowOptions.forEach { option ->
                     val isSelected = selectedOptions.contains(option)
@@ -410,7 +425,7 @@ fun ActivitiesSelection(onSelect: (List<String>) -> Unit) {
                         "야영" -> painterResource(id = R.drawable.act_camping)
                         "등산" -> painterResource(id = R.drawable.act_hiking)
                         "래프팅" -> painterResource(id = R.drawable.act_rafting)
-                        "명소탐방" -> painterResource(id = R.drawable.act_seeing)
+                        "명소탐방" -> painterResource(id = R.drawable.act_travel)
                         "산책" -> painterResource(id = R.drawable.act_sanwalk)
                         "풍경감상" -> painterResource(id = R.drawable.act_seeing)
                         "소풍" -> painterResource(id = R.drawable.act_picnic)
