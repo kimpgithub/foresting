@@ -24,11 +24,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.san_lim.screens.home.HomeScreen
 import com.example.san_lim.screens.home.SelectScreen
 import com.example.san_lim.screens.info.InfoScreen
 import com.example.san_lim.screens.login.LoginScreen
 import com.example.san_lim.screens.map.MapScreen
+import com.example.san_lim.screens.profile.ProfileScreen
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -60,7 +62,10 @@ fun NavGraph(startDestination: String = "login") {
                                 scaffoldState.drawerState.open()
                             }
                         }) {
-                            Icon(painterResource(id = R.drawable.ic_menu), contentDescription = "Menu")
+                            Icon(
+                                painterResource(id = R.drawable.ic_menu),
+                                contentDescription = "Menu"
+                            )
                         }
                     }
                 )
@@ -80,7 +85,17 @@ fun NavGraph(startDestination: String = "login") {
             composable("login") { LoginScreen(navController) }
             composable("home") { HomeScreen(navController) }
             composable("select_screen") { SelectScreen(navController) }
+            composable(
+                "info_screen/{recommendations}",
+                arguments = listOf(navArgument("recommendations") { defaultValue = "" })
+            ) { backStackEntry ->
+                val recommendationsString = backStackEntry.arguments?.getString("recommendations")
+                val recommendations =
+                    recommendationsString?.split(",")?.map { it.trim() } ?: emptyList()
+                InfoScreen(navController, recommendations)
+            }
             composable("map_screen") { MapScreen(navController) }
+            composable("profile_screen") { ProfileScreen(navController) } // 추가된 부분
         }
     }
 }
@@ -93,19 +108,37 @@ fun BottomNavigation(navController: NavHostController) {
         }
         Spacer(modifier = Modifier.weight(1f, true))
         IconButton(onClick = { navController.navigate("history") }) {
-            Icon(painter = painterResource(id = R.drawable.ic_history), contentDescription = "History")
+            Icon(
+                painter = painterResource(id = R.drawable.ic_history),
+                contentDescription = "History"
+            )
         }
         Spacer(modifier = Modifier.weight(1f, true))
         IconButton(onClick = { navController.navigate("book_screen") }) {
-            Icon(painter = painterResource(id = R.drawable.baseline_photo_library_24), contentDescription = "Book Screen")
+            Icon(
+                painter = painterResource(id = R.drawable.baseline_photo_library_24),
+                contentDescription = "Book Screen"
+            )
         }
         Spacer(modifier = Modifier.weight(1f, true))
         IconButton(onClick = { navController.navigate("map_screen") }) {
-            Icon(painter = painterResource(id = R.drawable.ic_map), contentDescription = "Map Screen")
+            Icon(
+                painter = painterResource(id = R.drawable.ic_map),
+                contentDescription = "Map Screen"
+            )
         }
         Spacer(modifier = Modifier.weight(1f, true))
         IconButton(onClick = { navController.navigate("info_screen") }) {
-            Icon(painter = painterResource(id = R.drawable.ic_info), contentDescription = "Info Screen")
+            Icon(
+                painter = painterResource(id = R.drawable.ic_info),
+                contentDescription = "Info Screen"
+            )
+            IconButton(onClick = { navController.navigate("profile_screen") }) { // 변경된 부분
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_profile),
+                    contentDescription = "Profile Screen"
+                )
+            }
         }
     }
 }

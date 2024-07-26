@@ -1,5 +1,7 @@
 package com.example.san_lim.screens.home
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -13,12 +15,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.san_lim.R // 추가된 import 문
+
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -52,7 +56,7 @@ fun HomeScreen(navController: NavController) {
                     text = "휴양림 추천",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White // Adjust text color for better visibility
+                    color = Color.Black // Adjust text color for better visibility
                 )
             }
         }
@@ -68,6 +72,55 @@ fun HomeScreen(navController: NavController) {
 }
 
 @Composable
+fun QuickAccessItem(
+    title: String,
+    backgroundColor: Color,
+    navController: NavController,
+    destination: String,
+    isExternalLink: Boolean,
+    imageResourceId: Int, // Add this parameter
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current // Get the context
+
+    Surface(
+        modifier = modifier
+            .aspectRatio(1f)
+            .clickable {
+                if (isExternalLink) {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(destination))
+                    context.startActivity(intent)
+                } else {
+                    navController.navigate(destination)
+                }
+            },
+        shape = RoundedCornerShape(8.dp),
+        color = backgroundColor
+    ) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            // Add the background image with transparency
+            Image(
+                painter = painterResource(id = imageResourceId), // Use the image resource parameter
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .graphicsLayer(alpha = 0.3f) // Set transparency
+            )
+            // Add the text on top of the image
+            Text(
+                text = title,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White // Adjust text color for better visibility
+            )
+        }
+    }
+}
+
+@Composable
 fun QuickAccessGrid(navController: NavController, modifier: Modifier = Modifier) {
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -78,17 +131,21 @@ fun QuickAccessGrid(navController: NavController, modifier: Modifier = Modifier)
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             QuickAccessItem(
-                title = "산림맵",
+                title = "산림청",
                 backgroundColor = Color(0xFFA7E2F7),
                 navController = navController,
-                destination = "map_screen",
+                destination = "https://www.forest.go.kr",
+                isExternalLink = true,
+                imageResourceId = R.drawable.home_sanlim, // Replace with your image resource
                 modifier = Modifier.weight(1f)
             )
             QuickAccessItem(
-                title = "도감",
+                title = "100대 명상 트레킹코스",
                 backgroundColor = Color(0xFFF3B0C3),
                 navController = navController,
                 destination = "guide_screen",
+                isExternalLink = false,
+                imageResourceId = R.drawable.home_sanlim, // Replace with your image resource
                 modifier = Modifier.weight(1f)
             )
         }
@@ -98,47 +155,22 @@ fun QuickAccessGrid(navController: NavController, modifier: Modifier = Modifier)
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             QuickAccessItem(
-                title = "산책로 추천",
+                title = "휴양림 정보",
                 backgroundColor = Color(0xFFE1D5F0),
                 navController = navController,
                 destination = "trail_recommendation_screen",
+                isExternalLink = false,
+                imageResourceId = R.drawable.home_sanlim, // Replace with your image resource
                 modifier = Modifier.weight(1f)
             )
             QuickAccessItem(
-                title = "빈",
+                title = "봉사 알림",
                 backgroundColor = Color(0xFFFFF0C2),
                 navController = navController,
                 destination = "empty_screen",
+                isExternalLink = false,
+                imageResourceId = R.drawable.home_sanlim, // Replace with your image resource
                 modifier = Modifier.weight(1f)
-            )
-        }
-    }
-}
-
-@Composable
-fun QuickAccessItem(
-    title: String,
-    backgroundColor: Color,
-    navController: NavController,
-    destination: String,
-    modifier: Modifier = Modifier
-) {
-    Surface(
-        modifier = modifier
-            .aspectRatio(1f)
-            .clickable {
-                navController.navigate(destination)
-            },
-        shape = RoundedCornerShape(8.dp),
-        color = backgroundColor
-    ) {
-        Box(
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = title,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold
             )
         }
     }
