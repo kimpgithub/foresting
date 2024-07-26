@@ -1,82 +1,62 @@
-package com.example.san_lim.utils
+package com.example.san_lim
 
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
-import android.net.Uri
-import android.util.Log
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
-//
-//fun uploadDataToFirebase(
-//    name: String,
-//    latitude: Double,
-//    longitude: Double,
-//    date: String,
-//    weedType: String,
-//    comment: String,
-//    imageUri: Uri,
-//    onSuccess: () -> Unit,
-//    onFailure: (Exception) -> Unit
-//) {
-//    val database: DatabaseReference = FirebaseDatabase.getInstance().reference
-//    val storage: StorageReference = FirebaseStorage.getInstance().reference
-//
-//    val imageRef = storage.child("images/${imageUri.lastPathSegment}")
-//    val uploadTask = imageRef.putFile(imageUri)
-//
-//    uploadTask.addOnSuccessListener { taskSnapshot ->
-//        Log.d("FirebaseUtils", "Image upload successful")
-//        imageRef.downloadUrl.addOnSuccessListener { uri ->
-//            val weedData = WeedData(
-//                name,
-//                latitude,
-//                longitude,
-//                date,
-//                weedType,
-//                comment,
-//                uri.toString()
-//            )
-//
-//            database.child("weeds").push().setValue(weedData)
-//                .addOnSuccessListener {
-//                    Log.d("FirebaseUtils", "Data upload successful")
-//                    onSuccess()
-//                }
-//                .addOnFailureListener { exception ->
-//                    Log.e("FirebaseUtils", "Database upload failed", exception)
-//                    onFailure(exception)
-//                }
-//        }.addOnFailureListener { exception ->
-//            Log.e("FirebaseUtils", "Failed to get download URL", exception)
-//            onFailure(exception)
-//        }
-//    }.addOnFailureListener { exception ->
-//        Log.e("FirebaseUtils", "Image upload failed", exception)
-//        onFailure(exception)
-//    }
-//}
-//
-//fun fetchDataFromFirebase(
-//    onDataLoaded: (List<WeedData>) -> Unit,
-//    onFailure: (Exception) -> Unit
-//) {
-//    val database: DatabaseReference = FirebaseDatabase.getInstance().reference.child("weeds")
-//    database.addListenerForSingleValueEvent(object : ValueEventListener {
-//        override fun onDataChange(dataSnapshot: DataSnapshot) {
-//            val weedDataList = mutableListOf<WeedData>()
-//            for (snapshot in dataSnapshot.children) {
-//                val weedData = snapshot.getValue(WeedData::class.java)
-//                weedData?.let { weedDataList.add(it) }
-//            }
-//            onDataLoaded(weedDataList)
-//        }
-//
-//        override fun onCancelled(databaseError: DatabaseError) {
-//            Log.e("FirebaseUtils", "Database fetch failed", databaseError.toException())
-//            onFailure(databaseError.toException())
-//        }
-//    })
-//}
+import android.widget.Toast
+import androidx.navigation.NavHostController
+import com.google.firebase.auth.FirebaseAuthException
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+
+fun loginUser(email: String, password: String, navController: NavHostController) {
+    try {
+        Firebase.auth.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    // 로그인 성공
+                    Toast.makeText(navController.context, "Login Success", Toast.LENGTH_SHORT).show()
+                    navController.navigate("home")
+                } else {
+                    // 로그인 실패
+                    Toast.makeText(navController.context, "Login Failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+    } catch (e: FirebaseAuthException) {
+        Toast.makeText(navController.context, "Authentication error: ${e.message}", Toast.LENGTH_SHORT).show()
+    } catch (e: Exception) {
+        Toast.makeText(navController.context, "Unexpected error: ${e.message}", Toast.LENGTH_SHORT).show()
+    }
+}
+
+fun signUpUser(email: String, password: String, navController: NavHostController) {
+    try {
+        val auth = Firebase.auth
+        val firestore = Firebase.firestore
+
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    // 회원가입 성공
+                    val userId = auth.currentUser?.uid ?: return@addOnCompleteListener
+                    val user = hashMapOf(
+                        "email" to email
+                    )
+                    firestore.collection("users").document(userId)
+                        .set(user)
+                        .addOnSuccessListener {
+                            Toast.makeText(navController.context, "Sign Up Success", Toast.LENGTH_SHORT).show()
+                            navController.navigate("login")
+                        }
+                        .addOnFailureListener { e ->
+                            Toast.makeText(navController.context, "Error adding document: ${e.message}", Toast.LENGTH_SHORT).show()
+                        }
+                } else {
+                    // 회원가입 실패
+                    Toast.makeText(navController.context, "Sign Up Failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+    } catch (e: FirebaseAuthException) {
+        Toast.makeText(navController.context, "Authentication error: ${e.message}", Toast.LENGTH_SHORT).show()
+    } catch (e: Exception) {
+        Toast.makeText(navController.context, "Unexpected error: ${e.message}", Toast.LENGTH_SHORT).show()
+    }
+}
