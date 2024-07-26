@@ -93,5 +93,6 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
     implementation("io.coil-kt:coil-compose:2.7.0")
     implementation("com.google.accompanist:accompanist-flowlayout:0.23.1")
+    implementation ("com.google.android.gms:play-services-location:21.3.0")
 
 }
