@@ -19,11 +19,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.san_lim.screens.book.BookScreen
+//import com.example.san_lim.screens.book.BookScreen
 import com.example.san_lim.screens.data.DataVisualizationScreen
 import com.example.san_lim.screens.drawer.DrawerContent
-import com.example.san_lim.screens.history.HistoryScreen
+//import com.example.san_lim.screens.history.HistoryScreen
 import com.example.san_lim.screens.home.HomeScreen
+import com.example.san_lim.screens.home.SelectScreen
 import com.example.san_lim.screens.info.InfoScreen
 import com.example.san_lim.screens.map.MapScreen
 import kotlinx.coroutines.launch
@@ -64,10 +65,11 @@ fun NavGraph(startDestination: String = "home") {
             modifier = Modifier.padding(innerPadding)
         ) {
             composable("home") { HomeScreen(navController) }
+            composable("select_screen") { SelectScreen(navController) }
             composable("data_visualization") { DataVisualizationScreen(navController) }
-            composable("history") { HistoryScreen(navController) }
+//            composable("history") { HistoryScreen(navController) }
             composable("map_screen") { MapScreen(navController) }
-            composable("book_screen") { BookScreen(navController,context) }
+//            composable("book_screen") { BookScreen(navController,context) }
             composable("info_screen") { InfoScreen(navController) }
 
         }
