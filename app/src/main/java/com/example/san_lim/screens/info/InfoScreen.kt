@@ -21,6 +21,7 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
 
+//InfoScreen.kt
 @Composable
 fun InfoScreen(navController: NavController, recommendations: List<String>) {
     val context = LocalContext.current
