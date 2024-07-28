@@ -6,11 +6,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
@@ -37,6 +39,7 @@ import com.example.san_lim.loginUser
 import com.example.san_lim.signUpUser
 import kotlinx.coroutines.delay
 import com.example.san_lim.R
+
 @Composable
 fun LoginScreen(navController: NavHostController) {
     var email by remember { mutableStateOf("test@intel.com") }
@@ -44,6 +47,7 @@ fun LoginScreen(navController: NavHostController) {
     var isLogin by remember { mutableStateOf(true) }
 
     val backgroundPainter: Painter = painterResource(id = R.drawable.background)
+    val treePainter: Painter = painterResource(id = R.drawable.tree) // tree.jpg 이미지를 로드
 
     Box(
         modifier = Modifier
@@ -66,11 +70,35 @@ fun LoginScreen(navController: NavHostController) {
         ) {
             Spacer(modifier = Modifier.height(80.dp))
 
-            Text(
-                text = "Sanlim",
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold
-            )
+            // Row를 사용하여 "Foresting" 텍스트와 양쪽에 이미지를 배치
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Image(
+                    painter = treePainter,
+                    contentDescription = null,
+                    modifier = Modifier.size(40.dp)
+                )
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                Text(
+                    text = "Foresting",
+                    fontSize = 32.sp,
+                    color = Color(0xFF228B22), // 녹색으로 설정
+                    fontWeight = FontWeight.Bold
+                )
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                Image(
+                    painter = treePainter,
+                    contentDescription = null,
+                    modifier = Modifier.size(40.dp)
+                )
+            }
+
             Text(
                 text = "우리 산림의 재미를 더하다",
                 fontSize = 14.sp,
