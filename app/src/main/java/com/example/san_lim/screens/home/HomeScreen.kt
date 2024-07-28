@@ -154,12 +154,12 @@ fun QuickAccessGrid(navController: NavController, modifier: Modifier = Modifier)
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             QuickAccessItem(
-                title = "휴양림 정보",
+                title = "지역별 휴양림 정보",
                 backgroundColor = Color(0xFFE1D5F0),
                 navController = navController,
-                destination = "trail_recommendation_screen",
+                destination = "forest_info_screen",
                 isExternalLink = false,
-                imageResourceId = R.drawable.home_sanlim, // Replace with your image resource
+                imageResourceId = R.drawable.home_forest_info, // Replace with your image resource
                 modifier = Modifier.weight(1f)
             )
             QuickAccessItem(
