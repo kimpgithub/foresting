@@ -1,6 +1,9 @@
 package com.example.san_lim.screens.info
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -33,10 +36,23 @@ fun InfoScreen(navController: NavController, recommendations: List<String>) {
 
 @Composable
 fun LodgeCard(lodge: ForestLodge) {
+    val context = LocalContext.current
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .padding(vertical = 8.dp)
+            .clickable {
+                lodge.홈페이지주소?.let { url ->
+                    val fullUrl = if (url.startsWith("http://") || url.startsWith("https://")) {
+                        url
+                    } else {
+                        "http://$url"
+                    }
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(fullUrl))
+                    context.startActivity(intent)
+                }
+            },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {

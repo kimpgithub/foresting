@@ -56,18 +56,18 @@ fun NavGraph(startDestination: String = "login") {
             if (showTopBarAndBottomBar.value) {
                 TopAppBar(
                     title = { Text("San Lim") },
-                    navigationIcon = {
-                        IconButton(onClick = {
-                            scope.launch {
-                                scaffoldState.drawerState.open()
+                    navigationIcon = if (navBackStackEntry?.destination?.route !in listOf("login", "home")) {
+                        {
+                            IconButton(onClick = {
+                                navController.navigateUp()
+                            }) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_back),
+                                    contentDescription = "Back"
+                                )
                             }
-                        }) {
-                            Icon(
-                                painterResource(id = R.drawable.ic_menu),
-                                contentDescription = "Menu"
-                            )
                         }
-                    }
+                    } else null
                 )
             }
         },
