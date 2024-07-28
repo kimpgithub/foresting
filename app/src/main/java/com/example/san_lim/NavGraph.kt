@@ -25,6 +25,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.san_lim.screens.home.ForestInfoScreen
 import com.example.san_lim.screens.home.HomeScreen
 import com.example.san_lim.screens.home.SelectScreen
 import com.example.san_lim.screens.info.InfoScreen
@@ -32,7 +33,6 @@ import com.example.san_lim.screens.login.LoginScreen
 import com.example.san_lim.screens.map.MapScreen
 import com.example.san_lim.screens.map.RegisterVisitScreen
 import com.example.san_lim.screens.profile.ProfileScreen
-import kotlinx.coroutines.launch
 
 //NavGraph.kt
 @OptIn(ExperimentalMaterial3Api::class)
@@ -97,7 +97,7 @@ fun NavGraph(startDestination: String = "login") {
                 InfoScreen(navController, recommendations)
             }
             composable("map_screen") { MapScreen(navController) }
-            composable("profile_screen") { ProfileScreen(navController) } // 추가된 부분
+            composable("profile_screen") { ProfileScreen(navController) }
             composable(
                 "register_visit_screen/{lodgeName}",
                 arguments = listOf(navArgument("lodgeName") { defaultValue = "" })
@@ -105,10 +105,10 @@ fun NavGraph(startDestination: String = "login") {
                 val lodgeName = backStackEntry.arguments?.getString("lodgeName") ?: ""
                 RegisterVisitScreen(navController, lodgeName)
             }
+            composable("forest_info_screen") { ForestInfoScreen(navController) } // ForestInfoScreen 경로 추가
         }
     }
 }
-
 @Composable
 fun BottomNavigation(navController: NavHostController) {
     BottomAppBar {
