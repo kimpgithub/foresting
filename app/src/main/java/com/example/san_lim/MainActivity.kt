@@ -10,7 +10,6 @@ import androidx.compose.ui.Modifier
 import com.example.san_lim.ui.theme.San_limTheme
 import com.google.firebase.FirebaseApp
 
-
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

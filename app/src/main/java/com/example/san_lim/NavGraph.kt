@@ -28,6 +28,7 @@ import androidx.navigation.navArgument
 import com.example.san_lim.screens.home.ForestInfoScreen
 import com.example.san_lim.screens.home.HomeScreen
 import com.example.san_lim.screens.home.SelectScreen
+import com.example.san_lim.screens.trekking.TrekkingScreen
 import com.example.san_lim.screens.info.InfoScreen
 import com.example.san_lim.screens.login.LoginScreen
 import com.example.san_lim.screens.map.MapScreen
@@ -105,6 +106,8 @@ fun NavGraph(startDestination: String = "login") {
                 val lodgeName = backStackEntry.arguments?.getString("lodgeName") ?: ""
                 RegisterVisitScreen(navController, lodgeName)
             }
+
+            composable("trekking_screen") { TrekkingScreen(navController) } //
             composable("forest_info_screen") { ForestInfoScreen(navController) } // ForestInfoScreen 경로 추가
         }
     }
