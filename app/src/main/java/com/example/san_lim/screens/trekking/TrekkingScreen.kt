@@ -7,11 +7,27 @@ import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -25,10 +41,6 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.PolylineOptions
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import kotlin.math.acos
 import kotlin.math.cos
@@ -42,6 +54,7 @@ fun TrekkingScreen(navController: NavController) {
     val trekkingRoutes = remember { mutableStateOf<List<MountainRoute>>(emptyList()) }
     val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
     val currentLocation = remember { mutableStateOf<LatLng?>(null) }
+    var selectedMountain by remember { mutableStateOf<MountainRoute?>(null) }
 
     LaunchedEffect(Unit) {
         getCurrentLocation(context, fusedLocationClient) { location ->
@@ -77,11 +90,26 @@ fun TrekkingScreen(navController: NavController) {
                 }
                 TrekkingRouteList(
                     mountains = trekkingRoutes.value,
+                    selectedMountain = selectedMountain,
+                    onMountainSelected = { mountain ->
+                        selectedMountain = mountain
+                        mapView.getMapAsync { googleMap ->
+                            googleMap.clear()
+                            mountain!!.routes.forEach { route ->
+                                drawPolylines(googleMap, listOf(route))
+                            }
+                            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mountain.routes.first().latLngList.first(), 10f))
+                        }
+                    },
                     onRouteSelected = { selectedRoute ->
                         mapView.getMapAsync { googleMap ->
+                            googleMap.clear()
                             drawPolylines(googleMap, listOf(selectedRoute))
                             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(selectedRoute.latLngList.first(), 10f))
                         }
+                    },
+                    onBackClicked = {
+                        selectedMountain = null
                     },
                     modifier = Modifier
                         .weight(1f)
@@ -200,28 +228,53 @@ private fun showDistancePopup(totalDistance: Double) {
 @Composable
 fun TrekkingRouteList(
     mountains: List<MountainRoute>,
+    selectedMountain: MountainRoute?,
+    onMountainSelected: (MountainRoute?) -> Unit, // Allow null
     onRouteSelected: (Route) -> Unit,
+    onBackClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    LazyColumn(modifier = modifier) {
-        mountains.forEach { mountain ->
-            item {
-                Text(
-                    text = mountain.name,
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(8.dp)
-                )
-            }
-            items(mountain.routes) { route ->
+    if (selectedMountain == null) {
+        LazyColumn(modifier = modifier) {
+            items(mountains) { mountain ->
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp)
-                        .clickable { onRouteSelected(route) }
+                        .clickable { onMountainSelected(mountain) }
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
-                        Text(text = "Distance: %.2f km".format(route.totalDistance / 1000))
-                        // Add more details if needed
+                        Text(
+                            text = mountain.name,
+                            style = MaterialTheme.typography.headlineSmall
+                        )
+                        // You can add more details if needed
+                    }
+                }
+            }
+        }
+    } else {
+        Column(modifier = modifier.padding(16.dp)) {
+            Button(onClick = onBackClicked, modifier = Modifier.padding(bottom = 8.dp)) {
+                Text("Back to Mountains")
+            }
+            Text(
+                text = selectedMountain.name,
+                style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+            LazyColumn {
+                items(selectedMountain.routes) { route ->
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                            .clickable { onRouteSelected(route) }
+                    ) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            Text(text = "Distance: %.2f km".format(route.totalDistance / 1000))
+                            // Add more details if needed
+                        }
                     }
                 }
             }

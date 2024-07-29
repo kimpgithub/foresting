@@ -156,7 +156,7 @@ fun LoginScreen(navController: NavHostController) {
 
             Text(
                 text = if (isLogin) "아이디가 없으신가요? 회원가입" else "이미 계정이 있으신가요? 로그인",
-                color = Color.Blue,
+                color = Color(32, 124, 26),
                 modifier = Modifier.clickable { isLogin = !isLogin }
             )
         }
