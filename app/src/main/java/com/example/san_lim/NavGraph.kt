@@ -17,6 +17,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
@@ -59,6 +60,7 @@ fun NavGraph(startDestination: String = "login") {
             if (showTopBarAndBottomBar.value) {
                 TopAppBar(
                     title = { Text("San Lim") },
+                    backgroundColor = Color(154, 228, 193), // Top Bar Color
                     navigationIcon = if (navBackStackEntry?.destination?.route !in listOf("login", "home")) {
                         {
                             IconButton(onClick = {
@@ -114,30 +116,40 @@ fun NavGraph(startDestination: String = "login") {
 }
 @Composable
 fun BottomNavigation(navController: NavHostController) {
-    BottomAppBar {
+    BottomAppBar(
+        backgroundColor = Color(154, 228, 193) // Bottom Bar Color
+    ) {
         IconButton(onClick = { navController.navigate("home") }) {
-            Icon(painter = painterResource(id = R.drawable.ic_home), contentDescription = "Home")
+            Icon(
+                painter = painterResource(id = R.drawable.ic_home),
+                contentDescription = "Home",
+                tint = Color(0, 0, 0) // ic_home color
+            )
         }
         Spacer(modifier = Modifier.weight(1f, true))
         IconButton(onClick = { navController.navigate("history") }) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_history),
-                contentDescription = "History"
+                contentDescription = "History",
+                tint = Color(0, 0, 0) // ic_history color
             )
         }
         Spacer(modifier = Modifier.weight(1f, true))
         IconButton(onClick = { navController.navigate("map_screen") }) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_map),
-                contentDescription = "Map Screen"
+                contentDescription = "Map Screen",
+                tint = Color(0, 0, 0) // ic_map color
             )
         }
         Spacer(modifier = Modifier.weight(1f, true))
-        IconButton(onClick = { navController.navigate("profile_screen") }) { // 변경된 부분
+        IconButton(onClick = { navController.navigate("profile_screen") }) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_profile),
-                contentDescription = "Profile Screen"
+                contentDescription = "Profile Screen",
+                tint = Color(0, 0, 0) // ic_profile color
             )
         }
     }
 }
+

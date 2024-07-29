@@ -11,6 +11,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -21,6 +22,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants.IterateForever
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.san_lim.R // 추가된 import 문
 
 //HomeScreen.kt
@@ -35,7 +40,7 @@ fun HomeScreen(navController: NavController) {
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(0.7f) // Adjusted to fill available space
+                .weight(0.7f)
                 .padding(bottom = 16.dp)
                 .clickable { navController.navigate("select_screen") },
             shape = RoundedCornerShape(8.dp),
@@ -49,13 +54,13 @@ fun HomeScreen(navController: NavController) {
                     contentDescription = null,
                     modifier = Modifier
                         .fillMaxSize()
-                        .graphicsLayer(alpha = 0.3f) // Set transparency
+                        .graphicsLayer(alpha = 0.3f)
                 )
                 Text(
                     text = "휴양림 추천",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color.Black // Adjust text color for better visibility
+                    color = Color.Black
                 )
             }
         }
@@ -73,14 +78,13 @@ fun HomeScreen(navController: NavController) {
 @Composable
 fun QuickAccessItem(
     title: String,
-    backgroundColor: Color,
     navController: NavController,
     destination: String,
     isExternalLink: Boolean,
-    imageResourceId: Int, // Add this parameter
+    lottieFileName: String, // Change the parameter to the Lottie animation file name
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current // Get the context
+    val context = LocalContext.current
 
     Surface(
         modifier = modifier
@@ -93,27 +97,28 @@ fun QuickAccessItem(
                     navController.navigate(destination)
                 }
             },
-        shape = RoundedCornerShape(8.dp),
-        color = backgroundColor
+        shape = RoundedCornerShape(8.dp)
     ) {
-        Box(
-            contentAlignment = Alignment.Center,
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxSize()
         ) {
-            // Add the background image with transparency
-            Image(
-                painter = painterResource(id = imageResourceId), // Use the image resource parameter
-                contentDescription = null,
+            val composition by rememberLottieComposition(LottieCompositionSpec.Asset(lottieFileName))
+            LottieAnimation(
+                composition = composition,
+                iterations = IterateForever,
                 modifier = Modifier
                     .fillMaxSize()
-                    .graphicsLayer(alpha = 0.2f) // Set transparency
+                    .weight(1f)
+                    .graphicsLayer(alpha = 0.8f)
             )
-            // Add the text on top of the image
             Text(
                 text = title,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.Black // Adjust text color for better visibility
+                color = Color.Black,
+                modifier = Modifier.padding(8.dp)
             )
         }
     }
@@ -131,20 +136,18 @@ fun QuickAccessGrid(navController: NavController, modifier: Modifier = Modifier)
         ) {
             QuickAccessItem(
                 title = "산림청",
-                backgroundColor = Color(0xFFA7E2F7),
                 navController = navController,
                 destination = "https://www.forest.go.kr",
                 isExternalLink = true,
-                imageResourceId = R.drawable.home_sanlim, // Replace with your image resource
+                lottieFileName = "sanlim_lottie.json", // Replace with your Lottie animation file name in assets
                 modifier = Modifier.weight(1f)
             )
             QuickAccessItem(
                 title = "트레킹 코스",
-                backgroundColor = Color(0xFFF3B0C3),
                 navController = navController,
                 destination = "trekking_screen",
                 isExternalLink = false,
-                imageResourceId = R.drawable.home_sanlim, // Replace with your image resource
+                lottieFileName = "trekking_lottie.json", // Replace with your Lottie animation file name in assets
                 modifier = Modifier.weight(1f)
             )
         }
@@ -155,20 +158,18 @@ fun QuickAccessGrid(navController: NavController, modifier: Modifier = Modifier)
         ) {
             QuickAccessItem(
                 title = "지역별 휴양림 정보",
-                backgroundColor = Color(0xFFE1D5F0),
                 navController = navController,
                 destination = "forest_info_screen",
                 isExternalLink = false,
-                imageResourceId = R.drawable.home_forest_info, // Replace with your image resource
+                lottieFileName = "huelim_lottie.json", // Replace with your Lottie animation file name in assets
                 modifier = Modifier.weight(1f)
             )
             QuickAccessItem(
                 title = "봉사 알림",
-                backgroundColor = Color(0xFFFFF0C2),
                 navController = navController,
                 destination = "https://www.1365.go.kr/vols/1572247904127/partcptn/timeCptn.do",
                 isExternalLink = true,
-                imageResourceId = R.drawable.home_boongsa, // Replace with your image resource
+                lottieFileName = "volunteer_lottie.json", // Replace with your Lottie animation file name in assets
                 modifier = Modifier.weight(1f)
             )
         }
