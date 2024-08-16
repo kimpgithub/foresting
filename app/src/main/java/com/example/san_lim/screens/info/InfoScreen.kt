@@ -20,12 +20,16 @@ import androidx.navigation.NavController
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.height
+import androidx.compose.ui.layout.ContentScale
+import coil.compose.rememberImagePainter
 
 //InfoScreen.kt
 @Composable
 fun InfoScreen(navController: NavController, recommendations: List<String>) {
     val context = LocalContext.current
-    val lodges = loadForestLodgesFromJSON(context, "hueyanglim_data.json")
+    val lodges = loadForestLodgesFromJSON(context, "updated_forest_data.json")
     val filteredLodges = lodges.filter { it.휴양림명 in recommendations }
 
     LazyColumn(modifier = Modifier.padding(16.dp)) {
@@ -57,6 +61,18 @@ fun LodgeCard(lodge: ForestLodge) {
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
+            // 이미지 추가
+            val imageUrl =
+                lodge.이미지URL ?: "https://via.placeholder.com/150" // 이미지 URL이 없을 경우 기본 이미지 사용
+            Image(
+                painter = rememberImagePainter(data = imageUrl),
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .padding(bottom = 8.dp),
+                contentScale = ContentScale.Crop
+            )
             Text(text = "Name: ${lodge.휴양림명}")
             Text(text = "City: ${lodge.시도명}")
             Text(text = "Type: ${lodge.휴양림구분}")
@@ -87,7 +103,8 @@ data class ForestLodge(
     val 휴양림전화번호: String?,
     val 홈페이지주소: String?,
     val 위도: Double,
-    val 경도: Double
+    val 경도: Double,
+    val 이미지URL: String?
 )
 
 fun loadForestLodgesFromJSON(context: Context, fileName: String): List<ForestLodge> {
@@ -113,7 +130,8 @@ fun loadForestLodgesFromJSON(context: Context, fileName: String): List<ForestLod
             휴양림전화번호 = record["휴양림전화번호"],
             홈페이지주소 = record["홈페이지주소"],
             위도 = record["위도"]?.toDoubleOrNull() ?: 0.0,
-            경도 = record["경도"]?.toDoubleOrNull() ?: 0.0
+            경도 = record["경도"]?.toDoubleOrNull() ?: 0.0,
+            이미지URL = record["이미지URL"]  // 이미지 URL 추가
         )
     }
 }
