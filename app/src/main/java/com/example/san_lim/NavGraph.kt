@@ -9,17 +9,14 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.rememberScaffoldState
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -29,21 +26,18 @@ import androidx.navigation.navArgument
 import com.example.san_lim.screens.home.ForestInfoScreen
 import com.example.san_lim.screens.home.HomeScreen
 import com.example.san_lim.screens.home.SelectScreen
-import com.example.san_lim.screens.trekking.TrekkingScreen
 import com.example.san_lim.screens.info.InfoScreen
 import com.example.san_lim.screens.login.LoginScreen
 import com.example.san_lim.screens.map.MapScreen
 import com.example.san_lim.screens.map.RegisterVisitScreen
 import com.example.san_lim.screens.profile.ProfileScreen
+import com.example.san_lim.screens.trekking.TrekkingScreen
+import com.example.san_lim.ui.theme.ColorPalette
 
-//NavGraph.kt
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NavGraph(startDestination: String = "login") {
     val navController = rememberNavController()
     val scaffoldState = rememberScaffoldState()
-    val scope = rememberCoroutineScope()
-    val context = LocalContext.current
     val showTopBarAndBottomBar = remember { mutableStateOf(false) }
 
     // Observe the current back stack entry
@@ -60,7 +54,7 @@ fun NavGraph(startDestination: String = "login") {
             if (showTopBarAndBottomBar.value) {
                 TopAppBar(
                     title = { Text("Foresting") },
-                    backgroundColor = Color(154, 228, 193), // Top Bar Color
+                    backgroundColor = ColorPalette.primaryGreen, // Top Bar Color
                     navigationIcon = if (navBackStackEntry?.destination?.route !in listOf("login", "home")) {
                         {
                             IconButton(onClick = {
@@ -114,16 +108,17 @@ fun NavGraph(startDestination: String = "login") {
         }
     }
 }
+
 @Composable
 fun BottomNavigation(navController: NavHostController) {
     BottomAppBar(
-        backgroundColor = Color(154, 228, 193) // Bottom Bar Color
+        backgroundColor = ColorPalette.primaryGreen // Bottom Bar Color
     ) {
         IconButton(onClick = { navController.navigate("home") }) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_home),
                 contentDescription = "Home",
-                tint = Color(0, 0, 0) // ic_home color
+                tint = ColorPalette.lightGreen // ic_home color
             )
         }
         Spacer(modifier = Modifier.weight(1f, true))
@@ -131,7 +126,7 @@ fun BottomNavigation(navController: NavHostController) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_history),
                 contentDescription = "History",
-                tint = Color(0, 0, 0) // ic_history color
+                tint = ColorPalette.lightGreen // ic_history color
             )
         }
         Spacer(modifier = Modifier.weight(1f, true))
@@ -139,7 +134,7 @@ fun BottomNavigation(navController: NavHostController) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_map),
                 contentDescription = "Map Screen",
-                tint = Color(0, 0, 0) // ic_map color
+                tint = ColorPalette.lightGreen // ic_map color
             )
         }
         Spacer(modifier = Modifier.weight(1f, true))
@@ -147,9 +142,12 @@ fun BottomNavigation(navController: NavHostController) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_profile),
                 contentDescription = "Profile Screen",
-                tint = Color(0, 0, 0) // ic_profile color
+                tint = ColorPalette.lightGreen // ic_profile color
             )
         }
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+fun NavGraphPreview() { NavGraph(startDestination = "home") }
