@@ -15,8 +15,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -53,8 +56,15 @@ fun NavGraph(startDestination: String = "login") {
         topBar = {
             if (showTopBarAndBottomBar.value) {
                 TopAppBar(
-                    title = { Text("Foresting") },
-                    backgroundColor = ColorPalette.primaryGreen, // Top Bar Color
+                    title = {
+                        Text(
+                            "Foresting",
+                            fontSize = 24.sp,  // 폰트 크기를 키웠습니다
+                            fontWeight = FontWeight.Bold,  // 글씨를 굵게 만들었습니다
+                            color = Color.White  // 텍스트 색상을 하얀색으로 설정했습니다
+                        )
+                    },
+                    backgroundColor = ColorPalette.primaryGreen,
                     navigationIcon = if (navBackStackEntry?.destination?.route !in listOf("login", "home")) {
                         {
                             IconButton(onClick = {
@@ -62,7 +72,8 @@ fun NavGraph(startDestination: String = "login") {
                             }) {
                                 Icon(
                                     painter = painterResource(id = R.drawable.ic_back),
-                                    contentDescription = "Back"
+                                    contentDescription = "Back",
+                                    tint = Color.White  // 뒤로 가기 아이콘도 하얀색으로 설정했습니다
                                 )
                             }
                         }

@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,7 +27,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -81,44 +82,49 @@ fun SelectScreen(navController: NavHostController) {
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                verticalArrangement = Arrangement.Top
             ) {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    Text(
+                        "(${page + 1}/5)",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = ColorPalette.primaryGreen
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        when (page) {
+                            0 -> "어느 지역의 휴양림을 원하시나요?"
+                            1 -> "몇 명과 함께 방문하실 계획인가요?"
+                            2 -> "숙박을 계획하고 계신가요?"
+                            3 -> "어떤 시설을 중요하게 생각하시나요?"
+                            4 -> "어떤 활동을 선호하시나요?"
+                            else -> ""
+                        },
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black
+                    )
+                }
+                Spacer(modifier = Modifier.height(24.dp))
                 when (page) {
-                    0 -> {
-                        Text("어느 지역의 휴양림을 원하시나요?", fontSize = 20.sp)
-                        Spacer(modifier = Modifier.height(16.dp))
-                        RegionSelection(region) { selectedRegions ->
-                            region = selectedRegions
-                        }
+                    0 -> RegionSelection(region) { selectedRegions ->
+                        region = selectedRegions
                     }
-                    1 -> {
-                        Text("몇 명과 함께 방문하실 계획인가요?", fontSize = 20.sp)
-                        Spacer(modifier = Modifier.height(16.dp))
-                        CompanionsSelection(companions) { selectedCompanions ->
-                            companions = selectedCompanions
-                        }
+                    1 -> CompanionsSelection(companions) { selectedCompanions ->
+                        companions = selectedCompanions
                     }
-                    2 -> {
-                        Text("숙박을 계획하고 계신가요?", fontSize = 20.sp)
-                        Spacer(modifier = Modifier.height(16.dp))
-                        AccommodationSelection(accommodation) { selectedAccommodation ->
-                            accommodation = selectedAccommodation
-                        }
+                    2 -> AccommodationSelection(accommodation) { selectedAccommodation ->
+                        accommodation = selectedAccommodation
                     }
-                    3 -> {
-                        Text("어떤 시설을 중요하게 생각하시나요?", fontSize = 20.sp)
-                        Spacer(modifier = Modifier.height(16.dp))
-                        FacilitiesSelection(facilities) { selectedFacilities ->
-                            facilities = selectedFacilities
-                        }
+                    3 -> FacilitiesSelection(facilities) { selectedFacilities ->
+                        facilities = selectedFacilities
                     }
-                    4 -> {
-                        Text("어떤 활동을 선호하시나요?", fontSize = 20.sp)
-                        Spacer(modifier = Modifier.height(16.dp))
-                        ActivitiesSelection(activities) { selectedActivities ->
-                            activities = selectedActivities
-                        }
+                    4 -> ActivitiesSelection(activities) { selectedActivities ->
+                        activities = selectedActivities
                     }
                 }
             }
@@ -171,7 +177,7 @@ fun SelectScreen(navController: NavHostController) {
                     },
                     enabled = allSelected // 모든 항목이 선택되었을 때만 버튼 활성화
                 ) {
-                    Text("자동추천")
+                    Text("자동 추천")
                 }
             } else {
                 IconButton(
@@ -195,15 +201,16 @@ fun RegionSelection(selectedRegions: List<String>, onSelect: (List<String>) -> U
     val regions = listOf(
         "강원도", "경기도", "경상남도", "경상북도", "대구", "대전",
         "부산", "울산", "인천", "전라남도", "전라북도", "제주도",
-        "충청남도", "충청북도", "전체"
+        "충청남도", "충청북도"
     )
+    val allRegions = regions + "전체"
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
     ) {
-        regions.chunked(3).forEach { rowRegions ->
+        allRegions.chunked(3).forEach { rowRegions ->
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -214,10 +221,11 @@ fun RegionSelection(selectedRegions: List<String>, onSelect: (List<String>) -> U
                     val isSelected = selectedRegions.contains(region)
                     OutlinedButton(
                         onClick = {
-                            val newSelection = if (isSelected) {
-                                selectedRegions - region
-                            } else {
-                                selectedRegions + region
+                            val newSelection = when {
+                                region == "전체" && !isSelected -> allRegions
+                                region == "전체" && isSelected -> emptyList()
+                                isSelected -> selectedRegions - region - "전체"
+                                else -> (selectedRegions + region).filter { it != "전체" }
                             }
                             onSelect(newSelection)
                         },
@@ -225,16 +233,15 @@ fun RegionSelection(selectedRegions: List<String>, onSelect: (List<String>) -> U
                             .weight(1f)
                             .height(48.dp),
                         shape = RoundedCornerShape(24.dp),
-                        border = BorderStroke(1.dp, if (isSelected) MaterialTheme.colorScheme.primary else Color.Gray),
+                        border = BorderStroke(1.dp, ColorPalette.primaryGreen),
                         colors = ButtonDefaults.outlinedButtonColors(
-                            containerColor = if (isSelected) MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
-                            else MaterialTheme.colorScheme.surface
+                            containerColor = if (isSelected) ColorPalette.primaryGreen else Color.White
                         )
                     ) {
                         Text(
                             text = region,
                             fontSize = 14.sp,
-                            color = if (isSelected) MaterialTheme.colorScheme.primary else Color.DarkGray,
+                            color = if (isSelected) Color.White else ColorPalette.primaryGreen,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             textAlign = TextAlign.Center
@@ -250,12 +257,11 @@ fun RegionSelection(selectedRegions: List<String>, onSelect: (List<String>) -> U
 fun CompanionsSelection(companions: String, onSelect: (String) -> Unit) {
     val options = listOf("혼자", "2 ~ 3인", "4인 이상")
 
-    Row(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.CenterVertically
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         options.forEach { option ->
             val isSelected = companions == option
@@ -265,31 +271,29 @@ fun CompanionsSelection(companions: String, onSelect: (String) -> Unit) {
                 "4인 이상" -> painterResource(id = R.drawable.comp_person_4)
                 else -> painterResource(id = R.drawable.ic_launcher_foreground)
             }
-            Box(
-                contentAlignment = Alignment.Center,
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
+                    .fillMaxWidth()
                     .clickable { onSelect(option) }
-                    .padding(8.dp)
                     .background(
-                        color = if (isSelected) Color.LightGray else Color.Transparent,
+                        color = if (isSelected) ColorPalette.primaryGreen.copy(alpha = 0.1f) else Color.Transparent,
                         shape = RoundedCornerShape(8.dp)
                     )
                     .padding(8.dp)
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Image(
-                        painter = icon,
-                        contentDescription = option,
-                        modifier = Modifier.size(48.dp)
-                    )
-                    Text(
-                        text = option,
-                        fontSize = 16.sp,
-                        color = if (isSelected) ColorPalette.primaryGreen else Color.Black
-                    )
-                }
+                Image(
+                    painter = icon,
+                    contentDescription = option,
+                    modifier = Modifier.size(64.dp)
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                Text(
+                    text = option,
+                    fontSize = 18.sp,
+                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                    color = if (isSelected) ColorPalette.primaryGreen else Color.Black
+                )
             }
         }
     }
@@ -299,9 +303,11 @@ fun CompanionsSelection(companions: String, onSelect: (String) -> Unit) {
 fun AccommodationSelection(accommodation: String, onSelect: (String) -> Unit) {
     val options = listOf("예", "아니오")
 
-    Row(
-        horizontalArrangement = Arrangement.SpaceAround,
-        modifier = Modifier.fillMaxWidth()
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         options.forEach { option ->
             val isSelected = accommodation == option
@@ -310,31 +316,29 @@ fun AccommodationSelection(accommodation: String, onSelect: (String) -> Unit) {
                 "아니오" -> painterResource(id = R.drawable.accom_dangil)
                 else -> painterResource(id = R.drawable.ic_launcher_foreground)
             }
-            Box(
-                contentAlignment = Alignment.Center,
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
+                    .fillMaxWidth()
                     .clickable { onSelect(option) }
-                    .padding(8.dp)
                     .background(
-                        color = if (isSelected) Color(0xFFCCFF90) else Color.Transparent,
+                        color = if (isSelected) ColorPalette.primaryGreen.copy(alpha = 0.1f) else Color.Transparent,
                         shape = RoundedCornerShape(8.dp)
                     )
                     .padding(8.dp)
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Image(
-                        painter = icon,
-                        contentDescription = option,
-                        modifier = Modifier.size(48.dp)
-                    )
-                    Text(
-                        text = option,
-                        fontSize = 16.sp,
-                        color = if (isSelected) Color.Blue else Color.Black
-                    )
-                }
+                Image(
+                    painter = icon,
+                    contentDescription = option,
+                    modifier = Modifier.size(64.dp)
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                Text(
+                    text = option,
+                    fontSize = 18.sp,
+                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                    color = if (isSelected) ColorPalette.primaryGreen else Color.Black
+                )
             }
         }
     }
@@ -351,69 +355,46 @@ fun FacilitiesSelection(facilities: List<String>, onSelect: (List<String>) -> Un
     )
 
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        val rows = listOf(
-            options.take(2),
-            options.drop(2).take(3)
-        )
-
-        rows.forEach { rowOptions ->
+        options.forEach { option ->
+            val isSelected = facilities.contains(option)
+            val icon = when (option) {
+                "숙박시설" -> painterResource(id = R.drawable.fac_wood_cabin)
+                "체험 및 교육 시설" -> painterResource(id = R.drawable.fac_exp)
+                "편의시설" -> painterResource(id = R.drawable.fac_amenities)
+                "레저 및 놀이 시설" -> painterResource(id = R.drawable.fac_lesuire)
+                "자연경관 및 명소" -> painterResource(id = R.drawable.fac_nature)
+                else -> painterResource(id = R.drawable.ic_launcher_foreground)
+            }
             Row(
-                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-            ) {
-                rowOptions.forEach { option ->
-                    val isSelected = facilities.contains(option)
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier
-                            .clickable {
-                                val newFacilities = if (isSelected) {
-                                    facilities - option
-                                } else {
-                                    facilities + option
-                                }
-                                onSelect(newFacilities)
-                            }
-                            .padding(8.dp)
-                    ) {
-                        val icon = when (option) {
-                            "숙박시설" -> painterResource(id = R.drawable.fac_wood_cabin)
-                            "체험 및 교육 시설" -> painterResource(id = R.drawable.fac_exp)
-                            "편의시설" -> painterResource(id = R.drawable.fac_amenities)
-                            "레저 및 놀이 시설" -> painterResource(id = R.drawable.fac_lesuire)
-                            "자연경관 및 명소" -> painterResource(id = R.drawable.fac_nature)
-                            else -> painterResource(id = R.drawable.ic_launcher_foreground)
-                        }
-                        Box(
-                            contentAlignment = Alignment.Center,
-                            modifier = Modifier
-                                .size(48.dp)
-                                .background(
-                                    color = if (isSelected) Color(0xFFCCFF90) else Color.Transparent,
-                                    shape = RoundedCornerShape(8.dp)
-                                )
-                                .padding(8.dp)
-                        ) {
-                            Image(
-                                painter = icon,
-                                contentDescription = option,
-                                modifier = Modifier.size(48.dp)
-                            )
-                        }
-                        Text(
-                            text = option,
-                            fontSize = 16.sp,
-                            color = if (isSelected) Color.Blue else Color.Black
-                        )
+                    .clickable {
+                        onSelect(if (isSelected) facilities - option else facilities + option)
                     }
-                }
+                    .background(
+                        color = if (isSelected) ColorPalette.primaryGreen.copy(alpha = 0.1f) else Color.Transparent,
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .padding(8.dp)
+            ) {
+                Image(
+                    painter = icon,
+                    contentDescription = option,
+                    modifier = Modifier.size(64.dp)
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                Text(
+                    text = option,
+                    fontSize = 18.sp,
+                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                    color = if (isSelected) ColorPalette.primaryGreen else Color.Black
+                )
             }
         }
     }
@@ -424,70 +405,48 @@ fun ActivitiesSelection(activities: List<String>, onSelect: (List<String>) -> Un
     val options = listOf("야영", "등산", "래프팅", "명소탐방", "산책", "풍경감상", "소풍")
 
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        val rows = listOf(
-            options.take(3),
-            options.drop(3).take(3),
-            options.drop(6)
-        )
-
-        rows.forEach { rowOptions ->
+        options.forEach { option ->
+            val isSelected = activities.contains(option)
+            val icon = when (option) {
+                "야영" -> painterResource(id = R.drawable.act_camping)
+                "등산" -> painterResource(id = R.drawable.act_hiking)
+                "래프팅" -> painterResource(id = R.drawable.act_rafting)
+                "명소탐방" -> painterResource(id = R.drawable.act_travel)
+                "산책" -> painterResource(id = R.drawable.act_sanwalk)
+                "풍경감상" -> painterResource(id = R.drawable.act_seeing)
+                "소풍" -> painterResource(id = R.drawable.act_picnic)
+                else -> painterResource(id = R.drawable.ic_launcher_foreground)
+            }
             Row(
-                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp)
+                    .clickable {
+                        onSelect(if (isSelected) activities - option else activities + option)
+                    }
+                    .background(
+                        color = if (isSelected) ColorPalette.primaryGreen.copy(alpha = 0.1f) else Color.Transparent,
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .padding(8.dp)
             ) {
-                rowOptions.forEach { option ->
-                    val isSelected = activities.contains(option)
-                    val icon = when (option) {
-                        "야영" -> painterResource(id = R.drawable.act_camping)
-                        "등산" -> painterResource(id = R.drawable.act_hiking)
-                        "래프팅" -> painterResource(id = R.drawable.act_rafting)
-                        "명소탐방" -> painterResource(id = R.drawable.act_travel)
-                        "산책" -> painterResource(id = R.drawable.act_sanwalk)
-                        "풍경감상" -> painterResource(id = R.drawable.act_seeing)
-                        "소풍" -> painterResource(id = R.drawable.act_picnic)
-                        else -> painterResource(id = R.drawable.ic_launcher_foreground)
-                    }
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier
-                            .clickable {
-                                val newActivities = if (isSelected) {
-                                    activities - option
-                                } else {
-                                    activities + option
-                                }
-                                onSelect(newActivities)
-                            }
-                            .padding(8.dp)
-                            .background(
-                                color = if (isSelected) Color(0xFFCCFF90) else Color.Transparent,
-                                shape = RoundedCornerShape(8.dp)
-                            )
-                            .padding(8.dp)
-                    ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Image(
-                                painter = icon,
-                                contentDescription = option,
-                                modifier = Modifier.size(48.dp)
-                            )
-                            Text(
-                                text = option,
-                                fontSize = 16.sp,
-                                color = if (isSelected) Color.Blue else Color.Black
-                            )
-                        }
-                    }
-                }
+                Image(
+                    painter = icon,
+                    contentDescription = option,
+                    modifier = Modifier.size(64.dp)
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                Text(
+                    text = option,
+                    fontSize = 18.sp,
+                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                    color = if (isSelected) ColorPalette.primaryGreen else Color.Black
+                )
             }
         }
     }
