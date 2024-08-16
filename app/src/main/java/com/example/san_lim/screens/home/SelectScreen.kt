@@ -24,7 +24,6 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -33,7 +32,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -67,6 +65,11 @@ fun SelectScreen(navController: NavHostController) {
 
     val pagerState = rememberPagerState(pageCount = { 5 })
     val coroutineScope = rememberCoroutineScope()
+
+    // 모든 항목이 선택되었는지 확인하는 변수
+    val allSelected = region.isNotEmpty() && companions.isNotEmpty() &&
+            accommodation.isNotEmpty() && facilities.isNotEmpty() &&
+            activities.isNotEmpty()
 
     Column(modifier = Modifier.fillMaxSize()) {
         HorizontalPager(
@@ -141,30 +144,33 @@ fun SelectScreen(navController: NavHostController) {
             }
 
             if (pagerState.currentPage == 4) {
-                Button(onClick = {
-                    val apiService = RetrofitClient.instance
-                    val request = RecommendationRequest(
-                        user_id = "test@intel.com",
-                        region = region.joinToString(", "),
-                        activities = activities,
-                        facilities = facilities
-                    )
+                Button(
+                    onClick = {
+                        val apiService = RetrofitClient.instance
+                        val request = RecommendationRequest(
+                            user_id = "test@intel.com",
+                            region = region.joinToString(", "),
+                            activities = activities,
+                            facilities = facilities
+                        )
 
-                    apiService.getRecommendations(request).enqueue(object : Callback<List<String>> {
-                        override fun onResponse(call: Call<List<String>>, response: Response<List<String>>) {
-                            if (response.isSuccessful) {
-                                val recommendations = response.body()
-                                if (recommendations != null) {
-                                    navController.navigate("info_screen/${recommendations.joinToString(",")}")
+                        apiService.getRecommendations(request).enqueue(object : Callback<List<String>> {
+                            override fun onResponse(call: Call<List<String>>, response: Response<List<String>>) {
+                                if (response.isSuccessful) {
+                                    val recommendations = response.body()
+                                    if (recommendations != null) {
+                                        navController.navigate("info_screen/${recommendations.joinToString(",")}")
+                                    }
                                 }
                             }
-                        }
 
-                        override fun onFailure(call: Call<List<String>>, t: Throwable) {
-                            // 에러 처리
-                        }
-                    })
-                }) {
+                            override fun onFailure(call: Call<List<String>>, t: Throwable) {
+                                // 에러 처리
+                            }
+                        })
+                    },
+                    enabled = allSelected // 모든 항목이 선택되었을 때만 버튼 활성화
+                ) {
                     Text("자동추천")
                 }
             } else {
@@ -239,10 +245,10 @@ fun RegionSelection(selectedRegions: List<String>, onSelect: (List<String>) -> U
         }
     }
 }
+
 @Composable
 fun CompanionsSelection(companions: String, onSelect: (String) -> Unit) {
     val options = listOf("혼자", "2 ~ 3인", "4인 이상")
-    var selectedOption by remember { mutableStateOf("") }
 
     Row(
         modifier = Modifier
@@ -252,7 +258,7 @@ fun CompanionsSelection(companions: String, onSelect: (String) -> Unit) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         options.forEach { option ->
-            val isSelected = selectedOption == option
+            val isSelected = companions == option
             val icon: Painter = when (option) {
                 "혼자" -> painterResource(id = R.drawable.comp_person_1)
                 "2 ~ 3인" -> painterResource(id = R.drawable.comp_person_2)
@@ -262,10 +268,7 @@ fun CompanionsSelection(companions: String, onSelect: (String) -> Unit) {
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
-                    .clickable {
-                        selectedOption = option
-                        onSelect(option)
-                    }
+                    .clickable { onSelect(option) }
                     .padding(8.dp)
                     .background(
                         color = if (isSelected) Color.LightGray else Color.Transparent,
@@ -292,18 +295,16 @@ fun CompanionsSelection(companions: String, onSelect: (String) -> Unit) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AccommodationSelection(accommodation: String, onSelect: (String) -> Unit) {
     val options = listOf("예", "아니오")
-    var selectedOption by remember { mutableStateOf("") }
 
     Row(
         horizontalArrangement = Arrangement.SpaceAround,
         modifier = Modifier.fillMaxWidth()
     ) {
         options.forEach { option ->
-            val isSelected = selectedOption == option
+            val isSelected = accommodation == option
             val icon: Painter = when (option) {
                 "예" -> painterResource(id = R.drawable.accom_sukbak)
                 "아니오" -> painterResource(id = R.drawable.accom_dangil)
@@ -312,10 +313,7 @@ fun AccommodationSelection(accommodation: String, onSelect: (String) -> Unit) {
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
-                    .clickable {
-                        selectedOption = option
-                        onSelect(option)
-                    }
+                    .clickable { onSelect(option) }
                     .padding(8.dp)
                     .background(
                         color = if (isSelected) Color(0xFFCCFF90) else Color.Transparent,
@@ -342,7 +340,6 @@ fun AccommodationSelection(accommodation: String, onSelect: (String) -> Unit) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FacilitiesSelection(facilities: List<String>, onSelect: (List<String>) -> Unit) {
     val options = listOf(
@@ -352,16 +349,6 @@ fun FacilitiesSelection(facilities: List<String>, onSelect: (List<String>) -> Un
         "레저 및 놀이 시설",
         "자연경관 및 명소",
     )
-    var selectedOptions by remember { mutableStateOf(listOf<String>()) }
-
-    fun toggleOption(option: String) {
-        selectedOptions = if (selectedOptions.contains(option)) {
-            selectedOptions - option
-        } else {
-            selectedOptions + option
-        }
-        onSelect(selectedOptions)
-    }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -369,7 +356,6 @@ fun FacilitiesSelection(facilities: List<String>, onSelect: (List<String>) -> Un
             .fillMaxWidth()
             .padding(16.dp)
     ) {
-        // Split options into rows of 2 and 3 items
         val rows = listOf(
             options.take(2),
             options.drop(2).take(3)
@@ -383,12 +369,17 @@ fun FacilitiesSelection(facilities: List<String>, onSelect: (List<String>) -> Un
                     .padding(vertical = 8.dp)
             ) {
                 rowOptions.forEach { option ->
-                    val isSelected = selectedOptions.contains(option)
+                    val isSelected = facilities.contains(option)
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
                             .clickable {
-                                toggleOption(option)
+                                val newFacilities = if (isSelected) {
+                                    facilities - option
+                                } else {
+                                    facilities + option
+                                }
+                                onSelect(newFacilities)
                             }
                             .padding(8.dp)
                     ) {
@@ -428,20 +419,9 @@ fun FacilitiesSelection(facilities: List<String>, onSelect: (List<String>) -> Un
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ActivitiesSelection(activities: List<String>, onSelect: (List<String>) -> Unit) {
     val options = listOf("야영", "등산", "래프팅", "명소탐방", "산책", "풍경감상", "소풍")
-    var selectedOptions by remember { mutableStateOf(listOf<String>()) }
-
-    fun toggleOption(option: String) {
-        selectedOptions = if (selectedOptions.contains(option)) {
-            selectedOptions - option
-        } else {
-            selectedOptions + option
-        }
-        onSelect(selectedOptions)
-    }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -449,7 +429,6 @@ fun ActivitiesSelection(activities: List<String>, onSelect: (List<String>) -> Un
             .fillMaxWidth()
             .padding(16.dp)
     ) {
-        // Split options into rows of 3 items, with the last row having 1 item
         val rows = listOf(
             options.take(3),
             options.drop(3).take(3),
@@ -464,7 +443,7 @@ fun ActivitiesSelection(activities: List<String>, onSelect: (List<String>) -> Un
                     .padding(vertical = 8.dp)
             ) {
                 rowOptions.forEach { option ->
-                    val isSelected = selectedOptions.contains(option)
+                    val isSelected = activities.contains(option)
                     val icon = when (option) {
                         "야영" -> painterResource(id = R.drawable.act_camping)
                         "등산" -> painterResource(id = R.drawable.act_hiking)
@@ -479,7 +458,12 @@ fun ActivitiesSelection(activities: List<String>, onSelect: (List<String>) -> Un
                         contentAlignment = Alignment.Center,
                         modifier = Modifier
                             .clickable {
-                                toggleOption(option)
+                                val newActivities = if (isSelected) {
+                                    activities - option
+                                } else {
+                                    activities + option
+                                }
+                                onSelect(newActivities)
                             }
                             .padding(8.dp)
                             .background(
