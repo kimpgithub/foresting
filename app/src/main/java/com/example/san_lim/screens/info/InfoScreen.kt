@@ -117,4 +117,3 @@ fun loadForestLodgesFromJSON(context: Context, fileName: String): List<ForestLod
         )
     }
 }
-

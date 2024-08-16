@@ -50,8 +50,13 @@
     },
     {
       "id": "제공기관명"
+    },
+    {
+      "id": "이미지URL"
     }
   ],
+
+
   "records": [
     {
       "휴양림명": "거제자연휴양림",
@@ -70,7 +75,8 @@
       "경도": "128.625968",
       "데이터기준일자": "2023-11-06",
       "제공기관코드": "B552833",
-      "제공기관명": "거제해양관광개발공사"
+      "제공기관명": "거제해양관광개발공사",
+      "이미지URL": "https://www.google.com/imgres?q=%EA%B1%B0%EC%A0%9C%EC%9E%90%EC%97%B0%ED%9C%B4%EC%96%91%EB%A6%BC&imgurl=https%3A%2F%2Fimage.foresttrip.go.kr%2Ffrip%2F8a8e529e-68ec-4823-8484-9bdc5adae08c.jpg&imgrefurl=https%3A%2F%2Fgeoje.foresttrip.go.kr%2F&docid=oF7mos5TlhUfuM&tbnid=ZvLixvgpYwEeHM&vet=12ahUKEwjiy5el3_iHAxW_mq8BHYxCLnEQM3oECBUQAA..i&w=816&h=372&hcb=2&ved=2ahUKEwjiy5el3_iHAxW_mq8BHYxCLnEQM3oECBUQAA"
     },
     {
       "휴양림명": "성수산자연휴양림",
@@ -108,7 +114,8 @@
       "경도": "126.5056999542",
       "데이터기준일자": "2024-01-17",
       "제공기관코드": "4960000",
-      "제공기관명": "전라남도 함평군"
+      "제공기관명": "전라남도 함평군",
+      "이미지URL": "https://www.google.com/imgres?q=%EC%84%B1%EC%88%98%EC%82%B0%EC%9E%90%EC%97%B0%ED%9C%B4%EC%96%91%EB%A6%BC&imgurl=https%3A%2F%2Fmodo-phinf.pstatic.net%2F20160729_124%2F1469783635349a0nOx_JPEG%2FmosaVpttw6.jpeg%3Ftype%3Df320_320&imgrefurl=https%3A%2F%2Fsungsusan.modoo.at%2F&docid=wkUdMb2TBk9lqM&tbnid=YK-jXRgEE0HJtM&vet=12ahUKEwjxwKuv3_iHAxVMafUHHTdvGuIQM3oECBgQAA..i&w=320&h=320&hcb=2&ved=2ahUKEwjxwKuv3_iHAxVMafUHHTdvGuIQM3oECBgQAA"
     },
     {
       "휴양림명": "거창 항노화 힐링랜드",
@@ -127,7 +134,8 @@
       "경도": "128.0408983",
       "데이터기준일자": "2024-02-28",
       "제공기관코드": "5470000",
-      "제공기관명": "경상남도 거창군"
+      "제공기관명": "경상남도 거창군",
+      "이미지URL": "https://www.google.com/imgres?q=%EC%84%B1%EC%88%98%EC%82%B0%EC%9E%90%EC%97%B0%ED%9C%B4%EC%96%91%EB%A6%BC&imgurl=https%3A%2F%2Fmodo-phinf.pstatic.net%2F20160729_124%2F1469783635349a0nOx_JPEG%2FmosaVpttw6.jpeg%3Ftype%3Df320_320&imgrefurl=https%3A%2F%2Fsungsusan.modoo.at%2F&docid=wkUdMb2TBk9lqM&tbnid=YK-jXRgEE0HJtM&vet=12ahUKEwjxwKuv3_iHAxVMafUHHTdvGuIQM3oECBgQAA..i&w=320&h=320&hcb=2&ved=2ahUKEwjxwKuv3_iHAxVMafUHHTdvGuIQM3oECBgQAA"
     },
     {
       "휴양림명": "금봉자연휴양림",
@@ -146,7 +154,9 @@
       "경도": "128.8807891",
       "데이터기준일자": "2024-02-29",
       "제공기관코드": "5150000",
-      "제공기관명": "경상북도 의성군"
+      "제공기관명": "경상북도 의성군",
+      "이미지URL": "https://www.google.com/imgres?q=%EC%84%B1%EC%88%98%EC%82%B0%EC%9E%90%EC%97%B0%ED%9C%B4%EC%96%91%EB%A6%BC&imgurl=https%3A%2F%2Fmodo-phinf.pstatic.net%2F20160729_124%2F1469783635349a0nOx_JPEG%2FmosaVpttw6.jpeg%3Ftype%3Df320_320&imgrefurl=https%3A%2F%2Fsungsusan.modoo.at%2F&docid=wkUdMb2TBk9lqM&tbnid=YK-jXRgEE0HJtM&vet=12ahUKEwjxwKuv3_iHAxVMafUHHTdvGuIQM3oECBgQAA..i&w=320&h=320&hcb=2&ved=2ahUKEwjxwKuv3_iHAxVMafUHHTdvGuIQM3oECBgQAA"
+
     },
     {
       "휴양림명": "문수산자연휴양림",
@@ -165,7 +175,8 @@
       "경도": "128.834816",
       "데이터기준일자": "2024-02-29",
       "제공기관코드": "5240000",
-      "제공기관명": "경상북도 봉화군"
+      "제공기관명": "경상북도 봉화군",
+      "이미지URL": "https://www.google.com/imgres?q=%EC%84%B1%EC%88%98%EC%82%B0%EC%9E%90%EC%97%B0%ED%9C%B4%EC%96%91%EB%A6%BC&imgurl=https%3A%2F%2Fmodo-phinf.pstatic.net%2F20160729_124%2F1469783635349a0nOx_JPEG%2FmosaVpttw6.jpeg%3Ftype%3Df320_320&imgrefurl=https%3A%2F%2Fsungsusan.modoo.at%2F&docid=wkUdMb2TBk9lqM&tbnid=YK-jXRgEE0HJtM&vet=12ahUKEwjxwKuv3_iHAxVMafUHHTdvGuIQM3oECBgQAA..i&w=320&h=320&hcb=2&ved=2ahUKEwjxwKuv3_iHAxVMafUHHTdvGuIQM3oECBgQAA"
     },
     {
       "휴양림명": "영양에코둥지",

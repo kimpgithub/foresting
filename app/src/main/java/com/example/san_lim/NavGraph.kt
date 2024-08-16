@@ -59,7 +59,7 @@ fun NavGraph(startDestination: String = "login") {
         topBar = {
             if (showTopBarAndBottomBar.value) {
                 TopAppBar(
-                    title = { Text("San Lim") },
+                    title = { Text("Foresting") },
                     backgroundColor = Color(154, 228, 193), // Top Bar Color
                     navigationIcon = if (navBackStackEntry?.destination?.route !in listOf("login", "home")) {
                         {
