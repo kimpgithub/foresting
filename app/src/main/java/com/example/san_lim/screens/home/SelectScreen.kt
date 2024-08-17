@@ -1,7 +1,6 @@
 package com.example.san_lim.screens.home
 
 //SelectScreen.kt
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -19,15 +18,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -38,11 +35,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -50,6 +46,8 @@ import com.example.san_lim.R
 import com.example.san_lim.network.RecommendationRequest
 import com.example.san_lim.network.RetrofitClient
 import com.example.san_lim.ui.theme.ColorPalette
+import com.example.san_lim.widgets.AutoRecommendButton
+import com.example.san_lim.widgets.RegionSelectButton
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -67,12 +65,58 @@ fun SelectScreen(navController: NavHostController) {
     val pagerState = rememberPagerState(pageCount = { 5 })
     val coroutineScope = rememberCoroutineScope()
 
-    // 모든 항목이 선택되었는지 확인하는 변수
     val allSelected = region.isNotEmpty() && companions.isNotEmpty() &&
             accommodation.isNotEmpty() && facilities.isNotEmpty() &&
             activities.isNotEmpty()
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(ColorPalette.earthyLightGreen)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            if (pagerState.currentPage > 0) {
+                IconButton(
+                    onClick = {
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(pagerState.currentPage - 1)
+                        }
+                    }
+                ) {
+                    Icon(Icons.Default.ArrowBack, contentDescription = "Previous")
+                }
+            } else {
+                Spacer(modifier = Modifier.size(48.dp))
+            }
+
+            Text(
+                "(${pagerState.currentPage + 1}/5)",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                color = ColorPalette.earthyDarkMoss
+            )
+
+            if (pagerState.currentPage < 4) {
+                IconButton(
+                    onClick = {
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                        }
+                    }
+                ) {
+                    Icon(Icons.Default.ArrowForward, contentDescription = "Next")
+                }
+            } else {
+                Spacer(modifier = Modifier.size(48.dp))
+            }
+        }
+
         HorizontalPager(
             state = pagerState,
             modifier = Modifier.weight(1f),
@@ -84,32 +128,22 @@ fun SelectScreen(navController: NavHostController) {
                     .padding(16.dp),
                 verticalArrangement = Arrangement.Top
             ) {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.Start
-                ) {
-                    Text(
-                        "(${page + 1}/5)",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = ColorPalette.primaryGreen
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        when (page) {
-                            0 -> "어느 지역의 휴양림을 원하시나요?"
-                            1 -> "몇 명과 함께 방문하실 계획인가요?"
-                            2 -> "숙박을 계획하고 계신가요?"
-                            3 -> "어떤 시설을 중요하게 생각하시나요?"
-                            4 -> "어떤 활동을 선호하시나요?"
-                            else -> ""
-                        },
-                        fontSize = 22.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Black
-                    )
-                }
-                Spacer(modifier = Modifier.height(24.dp))
+                Text(
+                    when (page) {
+                        0 -> "어느 지역의 휴양림을 원하시나요?"
+                        1 -> "몇 명과 함께 방문하실 계획인가요?"
+                        2 -> "숙박을 계획하고 계신가요?"
+                        3 -> "어떤 시설을 중요하게 생각하시나요?"
+                        4 -> "어떤 활동을 선호하시나요?"
+                        else -> ""
+                    },
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = ColorPalette.darkCharcoal
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
                 when (page) {
                     0 -> RegionSelection(region) { selectedRegions ->
                         region = selectedRegions
@@ -130,72 +164,41 @@ fun SelectScreen(navController: NavHostController) {
             }
         }
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            IconButton(
+        if (pagerState.currentPage == 4) {
+            AutoRecommendButton(
                 onClick = {
-                    coroutineScope.launch {
-                        if (pagerState.currentPage > 0) {
-                            pagerState.animateScrollToPage(pagerState.currentPage - 1)
-                        }
-                    }
-                },
-                enabled = pagerState.currentPage > 0
-            ) {
-                Icon(Icons.Default.ArrowBack, contentDescription = "Previous")
-            }
+                    val apiService = RetrofitClient.instance
+                    val request = RecommendationRequest(
+                        user_id = "test@intel.com",
+                        region = region.joinToString(", "),
+                        activities = activities,
+                        facilities = facilities
+                    )
 
-            if (pagerState.currentPage == 4) {
-                Button(
-                    onClick = {
-                        val apiService = RetrofitClient.instance
-                        val request = RecommendationRequest(
-                            user_id = "test@intel.com",
-                            region = region.joinToString(", "),
-                            activities = activities,
-                            facilities = facilities
-                        )
-
-                        apiService.getRecommendations(request).enqueue(object : Callback<List<String>> {
-                            override fun onResponse(call: Call<List<String>>, response: Response<List<String>>) {
-                                if (response.isSuccessful) {
-                                    val recommendations = response.body()
-                                    if (recommendations != null) {
-                                        navController.navigate("info_screen/${recommendations.joinToString(",")}")
-                                    }
+                    apiService.getRecommendations(request).enqueue(object : Callback<List<String>> {
+                        override fun onResponse(call: Call<List<String>>, response: Response<List<String>>) {
+                            if (response.isSuccessful) {
+                                val recommendations = response.body()
+                                if (recommendations != null) {
+                                    navController.navigate("info_screen/${recommendations.joinToString(",")}")
                                 }
                             }
-
-                            override fun onFailure(call: Call<List<String>>, t: Throwable) {
-                                // 에러 처리
-                            }
-                        })
-                    },
-                    enabled = allSelected // 모든 항목이 선택되었을 때만 버튼 활성화
-                ) {
-                    Text("자동 추천")
-                }
-            } else {
-                IconButton(
-                    onClick = {
-                        coroutineScope.launch {
-                            if (pagerState.currentPage < 4) {
-                                pagerState.animateScrollToPage(pagerState.currentPage + 1)
-                            }
                         }
-                    },
-                    enabled = pagerState.currentPage < 4
-                ) {
-                    Icon(Icons.Default.ArrowForward, contentDescription = "Next")
-                }
-            }
+
+                        override fun onFailure(call: Call<List<String>>, t: Throwable) {
+                            // 에러 처리
+                        }
+                    })
+                },
+                isSelected = allSelected,  // 5개 항목이 모두 선택되었을 때 true
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            )
         }
     }
 }
+
 @Composable
 fun RegionSelection(selectedRegions: List<String>, onSelect: (List<String>) -> Unit) {
     val regions = listOf(
@@ -219,7 +222,9 @@ fun RegionSelection(selectedRegions: List<String>, onSelect: (List<String>) -> U
             ) {
                 rowRegions.forEach { region ->
                     val isSelected = selectedRegions.contains(region)
-                    OutlinedButton(
+                    RegionSelectButton(
+                        region = region,
+                        isSelected = isSelected,  // 여기서 isSelected 상태를 전달합니다.
                         onClick = {
                             val newSelection = when {
                                 region == "전체" && !isSelected -> allRegions
@@ -229,24 +234,8 @@ fun RegionSelection(selectedRegions: List<String>, onSelect: (List<String>) -> U
                             }
                             onSelect(newSelection)
                         },
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(48.dp),
-                        shape = RoundedCornerShape(24.dp),
-                        border = BorderStroke(1.dp, ColorPalette.primaryGreen),
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            containerColor = if (isSelected) ColorPalette.primaryGreen else Color.White
-                        )
-                    ) {
-                        Text(
-                            text = region,
-                            fontSize = 14.sp,
-                            color = if (isSelected) Color.White else ColorPalette.primaryGreen,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            textAlign = TextAlign.Center
-                        )
-                    }
+                        modifier = Modifier.weight(1f)
+                    )
                 }
             }
         }
@@ -277,22 +266,33 @@ fun CompanionsSelection(companions: String, onSelect: (String) -> Unit) {
                     .fillMaxWidth()
                     .clickable { onSelect(option) }
                     .background(
-                        color = if (isSelected) ColorPalette.primaryGreen.copy(alpha = 0.1f) else Color.Transparent,
+                        color = if (isSelected) ColorPalette.earthyDarkMoss else Color.Transparent,
                         shape = RoundedCornerShape(8.dp)
                     )
                     .padding(8.dp)
             ) {
-                Image(
-                    painter = icon,
-                    contentDescription = option,
-                    modifier = Modifier.size(64.dp)
-                )
+                Box(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .background(
+                            color = if (isSelected) Color.White else ColorPalette.softWhite,
+                            shape = CircleShape
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        painter = icon,
+                        contentDescription = option,
+                        modifier = Modifier.size(48.dp),
+                        colorFilter = if (isSelected) ColorFilter.tint(ColorPalette.earthyDarkMoss) else ColorFilter.tint(ColorPalette.warmGray)
+                    )
+                }
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
                     text = option,
                     fontSize = 18.sp,
-                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                    color = if (isSelected) ColorPalette.primaryGreen else Color.Black
+                    fontWeight = FontWeight.Bold,
+                    color = if (isSelected) Color.White else ColorPalette.softWhite
                 )
             }
         }
@@ -322,22 +322,33 @@ fun AccommodationSelection(accommodation: String, onSelect: (String) -> Unit) {
                     .fillMaxWidth()
                     .clickable { onSelect(option) }
                     .background(
-                        color = if (isSelected) ColorPalette.primaryGreen.copy(alpha = 0.1f) else Color.Transparent,
+                        color = if (isSelected) ColorPalette.earthyDarkMoss else Color.Transparent,
                         shape = RoundedCornerShape(8.dp)
                     )
                     .padding(8.dp)
             ) {
-                Image(
-                    painter = icon,
-                    contentDescription = option,
-                    modifier = Modifier.size(64.dp)
-                )
+                Box(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .background(
+                            color = if (isSelected) Color.White else ColorPalette.softWhite,
+                            shape = CircleShape
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        painter = icon,
+                        contentDescription = option,
+                        modifier = Modifier.size(48.dp),
+                        colorFilter = if (isSelected) ColorFilter.tint(ColorPalette.earthyDarkMoss) else ColorFilter.tint(ColorPalette.warmGray)
+                    )
+                }
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
                     text = option,
                     fontSize = 18.sp,
-                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                    color = if (isSelected) ColorPalette.primaryGreen else Color.Black
+                    fontWeight = FontWeight.Bold,
+                    color = if (isSelected) Color.White else ColorPalette.softWhite
                 )
             }
         }
@@ -378,22 +389,33 @@ fun FacilitiesSelection(facilities: List<String>, onSelect: (List<String>) -> Un
                         onSelect(if (isSelected) facilities - option else facilities + option)
                     }
                     .background(
-                        color = if (isSelected) ColorPalette.primaryGreen.copy(alpha = 0.1f) else Color.Transparent,
+                        color = if (isSelected) ColorPalette.earthyDarkMoss else Color.Transparent,
                         shape = RoundedCornerShape(8.dp)
                     )
                     .padding(8.dp)
             ) {
-                Image(
-                    painter = icon,
-                    contentDescription = option,
-                    modifier = Modifier.size(64.dp)
-                )
+                Box(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .background(
+                            color = if (isSelected) Color.White else ColorPalette.softWhite,
+                            shape = CircleShape
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        painter = icon,
+                        contentDescription = option,
+                        modifier = Modifier.size(48.dp),
+                        colorFilter = if (isSelected) ColorFilter.tint(ColorPalette.earthyDarkMoss) else ColorFilter.tint(ColorPalette.warmGray)
+                    )
+                }
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
                     text = option,
                     fontSize = 18.sp,
-                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                    color = if (isSelected) ColorPalette.primaryGreen else Color.Black
+                    fontWeight = FontWeight.Bold,
+                    color = if (isSelected) Color.White else ColorPalette.softWhite
                 )
             }
         }
@@ -430,22 +452,33 @@ fun ActivitiesSelection(activities: List<String>, onSelect: (List<String>) -> Un
                         onSelect(if (isSelected) activities - option else activities + option)
                     }
                     .background(
-                        color = if (isSelected) ColorPalette.primaryGreen.copy(alpha = 0.1f) else Color.Transparent,
+                        color = if (isSelected) ColorPalette.earthyDarkMoss else Color.Transparent,
                         shape = RoundedCornerShape(8.dp)
                     )
                     .padding(8.dp)
             ) {
-                Image(
-                    painter = icon,
-                    contentDescription = option,
-                    modifier = Modifier.size(64.dp)
-                )
+                Box(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .background(
+                            color = if (isSelected) Color.White else ColorPalette.softWhite,
+                            shape = CircleShape
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        painter = icon,
+                        contentDescription = option,
+                        modifier = Modifier.size(48.dp),
+                        colorFilter = if (isSelected) ColorFilter.tint(ColorPalette.earthyDarkMoss) else ColorFilter.tint(ColorPalette.warmGray)
+                    )
+                }
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
                     text = option,
                     fontSize = 18.sp,
-                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                    color = if (isSelected) ColorPalette.primaryGreen else Color.Black
+                    fontWeight = FontWeight.Bold,
+                    color = if (isSelected) Color.White else ColorPalette.softWhite
                 )
             }
         }

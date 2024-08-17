@@ -3,6 +3,7 @@ package com.example.san_lim.screens.home
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,17 +23,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants.IterateForever
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.san_lim.R
+import com.example.san_lim.screens.login.LoginScreen
+import com.example.san_lim.ui.theme.ColorPalette
 
 //HomeScreen.kt
 @Composable
@@ -41,39 +47,40 @@ fun HomeScreen(navController: NavController) {
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
+            .background(ColorPalette.softWhite) // 배경색을 softWhite로 변경
     ) {
+        Text(
+            text = "휴양림 추천",
+            style = MaterialTheme.typography.h6,
+            fontWeight = FontWeight.Bold,
+            color = ColorPalette.darkCharcoal,
+            modifier = Modifier.padding(vertical = 8.dp)
+        )
+
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(0.7f)
-                .padding(bottom = 16.dp)
+                .padding(bottom = 8.dp)
                 .clickable { navController.navigate("select_screen") },
             shape = RoundedCornerShape(8.dp),
-            color = Color(0xFFD0F0C0)
+            color = ColorPalette.softWhite
         ) {
-            Box(
-                contentAlignment = Alignment.Center
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.home_hue_select),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .graphicsLayer(alpha = 0.3f)
-                )
-                Text(
-                    text = "휴양림 추천",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.Black
-                )
-            }
+            Image(
+                painter = painterResource(id = R.drawable.home_hue_select),
+                contentDescription = "휴양림 추천",
+                modifier = Modifier
+                    .fillMaxSize()
+                    .graphicsLayer(alpha = 0.8f),  // 이미지 투명도를 조금 높였습니다
+                contentScale = ContentScale.Crop  // 이미지가 Surface를 꽉 채우도록 설정
+            )
         }
+
 
         Text(
             text = "Quick Access",
             style = MaterialTheme.typography.h6,
-            modifier = Modifier.padding(bottom = 8.dp)
+            modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
         )
 
         QuickAccessGrid(navController, modifier = Modifier.weight(1f))
@@ -102,7 +109,8 @@ fun QuickAccessItem(
                     navController.navigate(destination)
                 }
             },
-        shape = RoundedCornerShape(8.dp)
+        shape = RoundedCornerShape(8.dp),
+        color = ColorPalette.softWhite
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -122,7 +130,7 @@ fun QuickAccessItem(
                 text = title,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.Black,
+                color = ColorPalette.darkCharcoal,
                 modifier = Modifier.padding(8.dp)
             )
         }
@@ -179,4 +187,11 @@ fun QuickAccessGrid(navController: NavController, modifier: Modifier = Modifier)
             )
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun HomeScreenPreview() {
+    val navController = rememberNavController()
+    HomeScreen(navController = navController)
 }

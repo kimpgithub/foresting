@@ -59,12 +59,12 @@ fun NavGraph(startDestination: String = "login") {
                     title = {
                         Text(
                             "Foresting",
-                            fontSize = 24.sp,  // 폰트 크기를 키웠습니다
-                            fontWeight = FontWeight.Bold,  // 글씨를 굵게 만들었습니다
-                            color = Color.White  // 텍스트 색상을 하얀색으로 설정했습니다
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = ColorPalette.softWhite
                         )
                     },
-                    backgroundColor = ColorPalette.primaryGreen,
+                    backgroundColor = ColorPalette.earthyDarkBrown,
                     navigationIcon = if (navBackStackEntry?.destination?.route !in listOf("login", "home")) {
                         {
                             IconButton(onClick = {
@@ -123,13 +123,13 @@ fun NavGraph(startDestination: String = "login") {
 @Composable
 fun BottomNavigation(navController: NavHostController) {
     BottomAppBar(
-        backgroundColor = ColorPalette.primaryGreen // Bottom Bar Color
+        backgroundColor = ColorPalette.earthyDarkBrown // Bottom Bar Color
     ) {
         IconButton(onClick = { navController.navigate("home") }) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_home),
                 contentDescription = "Home",
-                tint = ColorPalette.lightGreen // ic_home color
+                tint = ColorPalette.earthyLightBrown // ic_home color
             )
         }
         Spacer(modifier = Modifier.weight(1f, true))
@@ -137,7 +137,7 @@ fun BottomNavigation(navController: NavHostController) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_history),
                 contentDescription = "History",
-                tint = ColorPalette.lightGreen // ic_history color
+                tint = ColorPalette.earthyLightBrown // ic_history color
             )
         }
         Spacer(modifier = Modifier.weight(1f, true))
@@ -145,7 +145,7 @@ fun BottomNavigation(navController: NavHostController) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_map),
                 contentDescription = "Map Screen",
-                tint = ColorPalette.lightGreen // ic_map color
+                tint = ColorPalette.earthyLightBrown // ic_map color
             )
         }
         Spacer(modifier = Modifier.weight(1f, true))
@@ -153,7 +153,7 @@ fun BottomNavigation(navController: NavHostController) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_profile),
                 contentDescription = "Profile Screen",
-                tint = ColorPalette.lightGreen // ic_profile color
+                tint = ColorPalette.earthyLightBrown // ic_profile color
             )
         }
     }

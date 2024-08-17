@@ -32,13 +32,16 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.san_lim.loginUser
 import com.example.san_lim.signUpUser
 import kotlinx.coroutines.delay
 import com.example.san_lim.R
+import com.example.san_lim.ui.theme.ColorPalette
 
 @Composable
 fun LoginScreen(navController: NavHostController) {
@@ -46,20 +49,23 @@ fun LoginScreen(navController: NavHostController) {
     var password by remember { mutableStateOf("123456") }
     var isLogin by remember { mutableStateOf(true) }
 
-    val backgroundPainter: Painter = painterResource(id = R.drawable.background)
+    // val backgroundPainter: Painter = painterResource(id = R.drawable.background) // 배경 이미지 로드
     val treePainter: Painter = painterResource(id = R.drawable.tree) // tree.jpg 이미지를 로드
+    val logoPainter: Painter = painterResource(id = R.drawable.korea_forest_logo) // 로고 이미지 로드
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFFFFFFF))
+            .background(ColorPalette.softWhite) // 배경색 변경
     ) {
+        /*
         Image(
             painter = backgroundPainter,
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
         )
+        */
 
         Column(
             modifier = Modifier
@@ -70,6 +76,14 @@ fun LoginScreen(navController: NavHostController) {
         ) {
             Spacer(modifier = Modifier.height(80.dp))
 
+            // 로고 이미지 추가
+            Image(
+                painter = logoPainter,
+                contentDescription = null,
+                modifier = Modifier.size(120.dp) // 로고 이미지 크기 조절
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
             // Row를 사용하여 "Foresting" 텍스트와 양쪽에 이미지를 배치
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -86,7 +100,7 @@ fun LoginScreen(navController: NavHostController) {
                 Text(
                     text = "Foresting",
                     fontSize = 32.sp,
-                    color = Color(0xFF228B22), // 녹색으로 설정
+                    color = ColorPalette.earthyDarkMoss,
                     fontWeight = FontWeight.Bold
                 )
 
@@ -98,12 +112,12 @@ fun LoginScreen(navController: NavHostController) {
                     modifier = Modifier.size(40.dp)
                 )
             }
-
             Text(
                 text = "우리 산림의 재미를 더하다",
                 fontSize = 14.sp,
-                color = Color.Gray
+                color = ColorPalette.lightCharcoal
             )
+            Spacer(modifier = Modifier.height(40.dp))
         }
 
         Column(
@@ -117,8 +131,9 @@ fun LoginScreen(navController: NavHostController) {
 
             Text(
                 text = "로그인",
+                color = ColorPalette.darkCharcoal,
                 fontSize = 24.sp,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -147,7 +162,7 @@ fun LoginScreen(navController: NavHostController) {
                 modifier = Modifier
                     .width(280.dp)
                     .height(50.dp),
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Black)
+                colors = ButtonDefaults.buttonColors(ColorPalette.earthyDarkMoss)
             ) {
                 Text(text = if (isLogin) "로그인" else "가입하기", fontSize = 18.sp, color = Color.White)
             }
@@ -156,9 +171,16 @@ fun LoginScreen(navController: NavHostController) {
 
             Text(
                 text = if (isLogin) "아이디가 없으신가요? 회원가입" else "이미 계정이 있으신가요? 로그인",
-                color = Color(32, 124, 26),
+                color = ColorPalette.earthyDarkMoss,
                 modifier = Modifier.clickable { isLogin = !isLogin }
             )
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun LoginScreenPreview() {
+    val navController = rememberNavController()
+    LoginScreen(navController = navController)
 }
