@@ -101,7 +101,7 @@ fun MapScreen(navController: NavController) {
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(hueyanglimRecords) { record ->
-                HueyanglimCard(record, navController)
+                    HueyanglimCard(record, navController)
                 }
         }
     }
