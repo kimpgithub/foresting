@@ -114,7 +114,7 @@ fun NavGraph(startDestination: String = "login") {
                 RegisterVisitScreen(navController, lodgeName)
             }
 
-            composable("trekking_screen") { TrekkingScreen(navController) } //
+            composable("trekking_screen") { TrekkingScreen() } //
             composable("forest_info_screen") { ForestInfoScreen(navController) } // ForestInfoScreen 경로 추가
         }
     }

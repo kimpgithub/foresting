@@ -55,15 +55,6 @@ fun LoginScreen(navController: NavHostController) {
             .fillMaxSize()
             .background(ColorPalette.softWhite) // 배경색 변경
     ) {
-        /*
-        Image(
-            painter = backgroundPainter,
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize()
-        )
-        */
-
         Column(
             modifier = Modifier
                 .fillMaxSize()

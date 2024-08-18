@@ -152,7 +152,10 @@ fun LodgeCard(lodge: ForestLodge) {
                     modifier = Modifier.align(Alignment.CenterHorizontally), // 버튼을 가로 중앙에 정렬
                     colors = ButtonDefaults.buttonColors(containerColor = ColorPalette.earthyDarkMoss) // 버튼 색상 변경
                 ) {
-                    Text("Visit Website")  // 버튼 텍스트 추가 (필요할 경우)
+                    Text(
+                        text = "Visit Website",
+                        color = ColorPalette.softWhite
+                    )  // 버튼 텍스트 추가 (필요할 경우)
                 }
             }
         }

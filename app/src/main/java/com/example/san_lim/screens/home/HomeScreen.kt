@@ -80,7 +80,6 @@ fun HomeScreen(navController: NavController) {
             Text(
                 text = "Quick Access",
                 style = MaterialTheme.typography.headlineSmall,
-                modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
             )
 
             QuickAccessGrid(navController, modifier = Modifier.weight(1f))
@@ -132,7 +131,6 @@ fun QuickAccessItem(
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 color = ColorPalette.darkCharcoal,
-                modifier = Modifier.padding(8.dp)
             )
         }
     }
