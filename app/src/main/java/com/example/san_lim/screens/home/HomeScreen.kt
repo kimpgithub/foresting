@@ -14,9 +14,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -46,16 +46,19 @@ fun HomeScreen(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
-            .background(ColorPalette.softWhite) // 배경색을 softWhite로 변경
+            .background(ColorPalette.softWhite)
     ) {
-        Text(
-            text = "휴양림 추천",
-            style = MaterialTheme.typography.h6,
-            fontWeight = FontWeight.Bold,
-            color = ColorPalette.darkCharcoal,
-            modifier = Modifier.padding(vertical = 8.dp)
-        )
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+        ) {
+            Text(
+                text = "휴양림 추천",
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+                color = ColorPalette.darkCharcoal,
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
 
         Surface(
             modifier = Modifier
@@ -76,12 +79,11 @@ fun HomeScreen(navController: NavController) {
             )
         }
 
-
-        Text(
-            text = "Quick Access",
-            style = MaterialTheme.typography.h6,
-            modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
-        )
+            Text(
+                text = "Quick Access",
+                style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+            )
 
         QuickAccessGrid(navController, modifier = Modifier.weight(1f))
     }

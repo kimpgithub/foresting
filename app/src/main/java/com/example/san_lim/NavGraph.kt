@@ -102,7 +102,7 @@ fun NavGraph(startDestination: String = "login") {
                 val recommendationsString = backStackEntry.arguments?.getString("recommendations")
                 val recommendations =
                     recommendationsString?.split(",")?.map { it.trim() } ?: emptyList()
-                InfoScreen(navController, recommendations)
+                InfoScreen(recommendations)
             }
             composable("map_screen") { MapScreen(navController) }
             composable("profile_screen") { ProfileScreen(navController) }
