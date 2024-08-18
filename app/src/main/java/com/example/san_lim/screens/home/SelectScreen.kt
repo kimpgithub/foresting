@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -426,13 +428,13 @@ fun FacilitiesSelection(facilities: List<String>, onSelect: (List<String>) -> Un
 fun ActivitiesSelection(activities: List<String>, onSelect: (List<String>) -> Unit) {
     val options = listOf("야영", "등산", "래프팅", "명소탐방", "산책", "풍경감상", "소풍")
 
-    Column(
+    LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        options.forEach { option ->
+        items(options) { option ->
             val isSelected = activities.contains(option)
             val icon = when (option) {
                 "야영" -> painterResource(id = R.drawable.act_camping)
