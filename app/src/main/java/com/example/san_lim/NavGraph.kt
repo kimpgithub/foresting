@@ -15,8 +15,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -53,8 +56,15 @@ fun NavGraph(startDestination: String = "login") {
         topBar = {
             if (showTopBarAndBottomBar.value) {
                 TopAppBar(
-                    title = { Text("Foresting") },
-                    backgroundColor = ColorPalette.primaryGreen, // Top Bar Color
+                    title = {
+                        Text(
+                            "Foresting",
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = ColorPalette.softWhite
+                        )
+                    },
+                    backgroundColor = ColorPalette.earthyDarkBrown,
                     navigationIcon = if (navBackStackEntry?.destination?.route !in listOf("login", "home")) {
                         {
                             IconButton(onClick = {
@@ -62,7 +72,8 @@ fun NavGraph(startDestination: String = "login") {
                             }) {
                                 Icon(
                                     painter = painterResource(id = R.drawable.ic_back),
-                                    contentDescription = "Back"
+                                    contentDescription = "Back",
+                                    tint = Color.White  // 뒤로 가기 아이콘도 하얀색으로 설정했습니다
                                 )
                             }
                         }
@@ -112,13 +123,13 @@ fun NavGraph(startDestination: String = "login") {
 @Composable
 fun BottomNavigation(navController: NavHostController) {
     BottomAppBar(
-        backgroundColor = ColorPalette.primaryGreen // Bottom Bar Color
+        backgroundColor = ColorPalette.earthyDarkBrown // Bottom Bar Color
     ) {
         IconButton(onClick = { navController.navigate("home") }) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_home),
                 contentDescription = "Home",
-                tint = ColorPalette.lightGreen // ic_home color
+                tint = ColorPalette.earthyLightBrown // ic_home color
             )
         }
         Spacer(modifier = Modifier.weight(1f, true))
@@ -126,7 +137,7 @@ fun BottomNavigation(navController: NavHostController) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_history),
                 contentDescription = "History",
-                tint = ColorPalette.lightGreen // ic_history color
+                tint = ColorPalette.earthyLightBrown // ic_history color
             )
         }
         Spacer(modifier = Modifier.weight(1f, true))
@@ -134,7 +145,7 @@ fun BottomNavigation(navController: NavHostController) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_map),
                 contentDescription = "Map Screen",
-                tint = ColorPalette.lightGreen // ic_map color
+                tint = ColorPalette.earthyLightBrown // ic_map color
             )
         }
         Spacer(modifier = Modifier.weight(1f, true))
@@ -142,7 +153,7 @@ fun BottomNavigation(navController: NavHostController) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_profile),
                 contentDescription = "Profile Screen",
-                tint = ColorPalette.lightGreen // ic_profile color
+                tint = ColorPalette.earthyLightBrown // ic_profile color
             )
         }
     }
