@@ -58,7 +58,11 @@ fun ProfileScreen(navController: NavController) {
             contentAlignment = Alignment.Center
         ) {
             selectedImageUri?.let {
-                Image(painter = rememberImagePainter(data = it), contentDescription = null, modifier = Modifier.size(150.dp))
+                Image(
+                    painter = rememberAsyncImagePainter(model = it),
+                    contentDescription = null,
+                    modifier = Modifier.size(150.dp)
+                )
             } ?: run {
                 Text("이미지 업로드", color = Color.White, fontSize = 16.sp)
             }

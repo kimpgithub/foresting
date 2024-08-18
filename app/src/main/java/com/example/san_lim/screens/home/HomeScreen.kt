@@ -21,7 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -37,13 +36,12 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants.IterateForever
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.san_lim.R
-import com.example.san_lim.screens.login.LoginScreen
 import com.example.san_lim.ui.theme.ColorPalette
 
 //HomeScreen.kt
 @Composable
 fun HomeScreen(navController: NavController) {
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(ColorPalette.softWhite)
@@ -60,24 +58,24 @@ fun HomeScreen(navController: NavController) {
                 modifier = Modifier.padding(vertical = 8.dp)
             )
 
-        Surface(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(0.7f)
-                .padding(bottom = 8.dp)
-                .clickable { navController.navigate("select_screen") },
-            shape = RoundedCornerShape(8.dp),
-            color = ColorPalette.softWhite
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.home_hue_select),
-                contentDescription = "휴양림 추천",
+            Surface(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .graphicsLayer(alpha = 0.8f),  // 이미지 투명도를 조금 높였습니다
-                contentScale = ContentScale.Crop  // 이미지가 Surface를 꽉 채우도록 설정
-            )
-        }
+                    .fillMaxWidth()
+                    .weight(0.7f)
+                    .padding(bottom = 8.dp)
+                    .clickable { navController.navigate("select_screen") },
+                shape = RoundedCornerShape(8.dp),
+                color = ColorPalette.softWhite
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.home_hue_select),
+                    contentDescription = "휴양림 추천",
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .graphicsLayer(alpha = 0.8f),  // 이미지 투명도를 조금 높였습니다
+                    contentScale = ContentScale.Crop  // 이미지가 Surface를 꽉 채우도록 설정
+                )
+            }
 
             Text(
                 text = "Quick Access",
@@ -85,7 +83,8 @@ fun HomeScreen(navController: NavController) {
                 modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
             )
 
-        QuickAccessGrid(navController, modifier = Modifier.weight(1f))
+            QuickAccessGrid(navController, modifier = Modifier.weight(1f))
+        }
     }
 }
 
